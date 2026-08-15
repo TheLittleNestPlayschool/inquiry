@@ -417,20 +417,17 @@ export function formatElapsedTime(
 /*
    The gauge represents 3 hours.
 
-   0 hours  = 12 o'clock / top
-   1 hour   = 4 o'clock
-   2 hours  = 8 o'clock
-   3 hours  = 12 o'clock / top again
+   0 hours  = top
+   1 hour   = 4 o'clock position
+   2 hours  = 8 o'clock position
+   3 hours  = top again
 
    One complete rotation = 3 hours.
-
-   Therefore:
 
    60 minutes  = 120 degrees
    120 minutes = 240 degrees
    180 minutes = 360 degrees
 */
-
 
 function getGaugeRotation(
     timestamp
@@ -503,54 +500,50 @@ function createInquiryGauge(
 
 
     /*
-     * Position markers.
+     * Fixed hour labels.
      *
-     * Top       = 0
+     * Top = 0
      * 4 o'clock = 1
      * 8 o'clock = 2
      */
 
-    const marker0 =
+    const label1 =
         document.createElement(
             'span'
         );
 
-    marker0.className =
-        'gauge-marker gauge-marker-0';
+
+    label1.className =
+        'gauge-label gauge-label-1';
 
 
-    const marker1 =
+    label1.textContent =
+        '1';
+
+
+    const label2 =
         document.createElement(
             'span'
         );
 
-    marker1.className =
-        'gauge-marker gauge-marker-1';
+
+    label2.className =
+        'gauge-label gauge-label-2';
 
 
-    const marker2 =
-        document.createElement(
-            'span'
-        );
-
-    marker2.className =
-        'gauge-marker gauge-marker-2';
+    label2.textContent =
+        '2';
 
 
     /*
-     * Hand.
-     *
-     * IMPORTANT:
-     * The bottom of the hand is anchored
-     * at the exact center of the gauge.
-     *
-     * That means 0 degrees points straight up.
+     * Moving hand
      */
 
     const hand =
         document.createElement(
             'span'
         );
+
 
     hand.className =
         'inquiry-gauge-hand';
@@ -569,20 +562,17 @@ function createInquiryGauge(
             'span'
         );
 
+
     center.className =
         'inquiry-gauge-center';
 
 
     face.appendChild(
-        marker0
+        label1
     );
 
     face.appendChild(
-        marker1
-    );
-
-    face.appendChild(
-        marker2
+        label2
     );
 
     face.appendChild(
@@ -677,7 +667,7 @@ export function addInquiryCard(
 
 
     /*
-     * Left side
+     * Card content
      */
 
     const content =
@@ -750,7 +740,7 @@ export function addInquiryCard(
 
 
     /*
-     * Right side gauge
+     * Gauge
      */
 
     const gauge =
