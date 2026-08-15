@@ -1,0 +1,184 @@
+/* ==========================================
+   THREE-HOUR GAUGE
+========================================== */
+
+/*
+    The gauge is NOT a normal clock.
+
+    12 o'clock = 3 hours
+    4 o'clock  = 1 hour
+    8 o'clock  = 2 hours
+
+    The hand moves continuously through
+    the three-hour period.
+*/
+
+
+.inquiry-gauge{
+    flex:
+        0 0 46px;
+
+    width:46px;
+
+    height:46px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+}
+
+
+.inquiry-gauge-face{
+    position:relative;
+
+    width:44px;
+
+    height:44px;
+
+    border:
+        1px solid
+        rgba(
+            31,
+            41,
+            55,
+            .25
+        );
+
+    border-radius:50%;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            .12
+        );
+}
+
+
+/* ==========================================
+   GAUGE LABELS
+========================================== */
+
+.gauge-label{
+    position:absolute;
+
+    z-index:2;
+
+    font-size:8px;
+
+    line-height:1;
+
+    font-weight:600;
+
+    color:#6b7280;
+
+    pointer-events:none;
+}
+
+
+/*
+    3 hours
+    12 o'clock
+*/
+
+.gauge-label-3{
+    top:5px;
+
+    left:50%;
+
+    transform:
+        translateX(-50%);
+}
+
+
+/*
+    1 hour
+    4 o'clock
+*/
+
+.gauge-label-1{
+    right:5px;
+
+    top:66%;
+
+    transform:
+        translateY(-50%);
+}
+
+
+/*
+    2 hours
+    8 o'clock
+*/
+
+.gauge-label-2{
+    left:5px;
+
+    top:66%;
+
+    transform:
+        translateY(-50%);
+}
+
+
+/* ==========================================
+   GAUGE HAND
+========================================== */
+
+.inquiry-gauge-hand{
+    position:absolute;
+
+    z-index:3;
+
+    width:2px;
+
+    height:16px;
+
+    left:50%;
+
+    bottom:50%;
+
+    top:auto;
+
+    transform-origin:
+        50% 100%;
+
+    background:#111827;
+
+    border-radius:2px;
+
+    transition:
+        transform .4s ease;
+}
+
+
+/* ==========================================
+   GAUGE CENTER
+========================================== */
+
+.inquiry-gauge-center{
+    position:absolute;
+
+    z-index:4;
+
+    width:5px;
+
+    height:5px;
+
+    left:50%;
+
+    top:50%;
+
+    transform:
+        translate(
+            -50%,
+            -50%
+        );
+
+    border-radius:50%;
+
+    background:#111827;
+}
