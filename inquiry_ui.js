@@ -354,10 +354,10 @@ export function clearInquiryCards(){
 
 
 /* ==========================================
-   TIMER FORMAT
+   ELAPSED TIME
 ========================================== */
 
-export function formatElapsedTime(
+export function getElapsedMilliseconds(
     timestamp
 ){
 
@@ -372,15 +372,26 @@ export function formatElapsedTime(
         time <= 0
     ){
 
-        return '--';
+        return 0;
 
     }
 
 
+    return Math.max(
+        0,
+        Date.now() - time
+    );
+
+}
+
+
+export function formatElapsedTime(
+    timestamp
+){
+
     const elapsed =
-        Math.max(
-            0,
-            Date.now() - time
+        getElapsedMilliseconds(
+            timestamp
         );
 
 
@@ -416,7 +427,210 @@ export function formatElapsedTime(
 
 
 /* ==========================================
-   UPDATE CARD TIMER
+   THREE-HOUR CLOCK
+========================================== */
+
+/*
+   Clock mapping:
+
+   12 o'clock = 0 hours
+   4 o'clock  = 1 hour
+   8 o'clock  = 2 hours
+   12 o'clock = 3 hours
+
+   Therefore one complete rotation
+   represents three hours.
+
+   CSS rotation starts at 12 o'clock.
+*/
+
+function getClockRotation(
+    timestamp
+){
+
+    const elapsed =
+        getElapsedMilliseconds(
+            timestamp
+        );
+
+
+    const threeHours =
+        3 *
+        60 *
+        60 *
+        1000;
+
+
+    /*
+     * Keep the hand at 12 after
+     * the three-hour window.
+     */
+
+    if(
+        elapsed >=
+        threeHours
+    ){
+
+        return 360;
+
+    }
+
+
+    return (
+        elapsed /
+        threeHours
+    ) *
+    360;
+
+}
+
+
+/* ==========================================
+   CREATE CLOCK
+========================================== */
+
+function createInquiryClock(
+    timestamp
+){
+
+    const clock =
+        document.createElement(
+            'div'
+        );
+
+
+    clock.className =
+        'inquiry-clock';
+
+
+    clock.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
+
+    /*
+     * Clock face
+     */
+
+    const face =
+        document.createElement(
+            'div'
+        );
+
+
+    face.className =
+        'inquiry-clock-face';
+
+
+    /*
+     * Number positions
+     */
+
+    const twelve =
+        document.createElement(
+            'span'
+        );
+
+
+    twelve.className =
+        'clock-number clock-number-12';
+
+    twelve.textContent =
+        '12';
+
+
+    const four =
+        document.createElement(
+            'span'
+        );
+
+
+    four.className =
+        'clock-number clock-number-4';
+
+    four.textContent =
+        '4';
+
+
+    const eight =
+        document.createElement(
+            'span'
+        );
+
+
+    eight.className =
+        'clock-number clock-number-8';
+
+    eight.textContent =
+        '8';
+
+
+    /*
+     * Hand
+     */
+
+    const hand =
+        document.createElement(
+            'div'
+        );
+
+
+    hand.className =
+        'inquiry-clock-hand';
+
+
+    hand.style.transform =
+        `translateX(-50%) rotate(${getClockRotation(timestamp)}deg)`;
+
+
+    /*
+     * Center
+     */
+
+    const center =
+        document.createElement(
+            'div'
+        );
+
+
+    center.className =
+        'inquiry-clock-center';
+
+
+    face.appendChild(
+        twelve
+    );
+
+    face.appendChild(
+        four
+    );
+
+    face.appendChild(
+        eight
+    );
+
+    face.appendChild(
+        hand
+    );
+
+    face.appendChild(
+        center
+    );
+
+
+    clock.appendChild(
+        face
+    );
+
+
+    return clock;
+
+}
+
+
+/* ==========================================
+   UPDATE CLOCK
 ========================================== */
 
 export function updateCardTimer(
@@ -430,17 +644,28 @@ export function updateCardTimer(
         );
 
 
-    if(!timer){
+    if(timer){
 
-        return;
+        timer.textContent =
+            formatElapsedTime(
+                timestamp
+            );
 
     }
 
 
-    timer.textContent =
-        formatElapsedTime(
-            timestamp
+    const hand =
+        card.querySelector(
+            '.inquiry-clock-hand'
         );
+
+
+    if(hand){
+
+        hand.style.transform =
+            `translateX(-50%) rotate(${getClockRotation(timestamp)}deg)`;
+
+    }
 
 }
 
@@ -476,14 +701,18 @@ export function addInquiryCard(
         0;
 
 
-    const top =
+    /*
+     * Left side
+     */
+
+    const content =
         document.createElement(
             'div'
         );
 
 
-    top.className =
-        'inquiry-card-top';
+    content.className =
+        'inquiry-card-content';
 
 
     const name =
@@ -500,19 +729,9 @@ export function addInquiryCard(
         inquiry.parent_name;
 
 
-    top.appendChild(
+    content.appendChild(
         name
     );
-
-
-    const details =
-        document.createElement(
-            'div'
-        );
-
-
-    details.className =
-        'inquiry-card-details';
 
 
     const branch =
@@ -521,22 +740,15 @@ export function addInquiryCard(
         );
 
 
-    const branchName =
-        document.createElement(
-            'strong'
-        );
+    branch.className =
+        'inquiry-card-branch';
 
 
-    branchName.textContent =
+    branch.textContent =
         franchiseName;
 
 
-    branch.appendChild(
-        branchName
-    );
-
-
-    details.appendChild(
+    content.appendChild(
         branch
     );
 
@@ -557,18 +769,28 @@ export function addInquiryCard(
         );
 
 
-    details.appendChild(
+    content.appendChild(
         timer
     );
 
 
+    /*
+     * Right side clock
+     */
+
+    const clock =
+        createInquiryClock(
+            inquiry.last_activity_at
+        );
+
+
     card.appendChild(
-        top
+        content
     );
 
 
     card.appendChild(
-        details
+        clock
     );
 
 
