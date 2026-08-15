@@ -14,6 +14,11 @@
 
     <link
         rel="stylesheet"
+        href="background.css"
+    >
+
+    <link
+        rel="stylesheet"
         href="inquiry.css"
     >
 
@@ -50,9 +55,15 @@
         </header>
 
 
-        <section class="inquiry-panel">
+        <section
+            class="inquiry-panel"
+            id="inquiryPanel"
+        >
 
-            <div class="empty-state">
+            <div
+                class="empty-state"
+                id="emptyState"
+            >
 
                 <div class="empty-state-content">
 
@@ -73,6 +84,8 @@
 
     </main>
 
+
+    <!-- New Inquiry Modal -->
 
     <div
         id="newInquiryModal"
@@ -193,6 +206,10 @@
             'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/get_franchises';
 
 
+        const INQUIRY_API =
+            'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_inquiry_history';
+
+
         const newInquiryButton =
             document.getElementById(
                 'newInquiryButton'
@@ -217,9 +234,33 @@
             );
 
 
+        const createInquiryButton =
+            document.getElementById(
+                'createInquiry'
+            );
+
+
+        const parentNameInput =
+            document.getElementById(
+                'parentName'
+            );
+
+
         const franchiseSelect =
             document.getElementById(
                 'franchise'
+            );
+
+
+        const inquiryPanel =
+            document.getElementById(
+                'inquiryPanel'
+            );
+
+
+        const emptyState =
+            document.getElementById(
+                'emptyState'
             );
 
 
@@ -243,6 +284,8 @@
                 'false'
             );
 
+            parentNameInput.focus();
+
             loadFranchises();
 
         }
@@ -258,6 +301,10 @@
                 'aria-hidden',
                 'true'
             );
+
+            parentNameInput.value = '';
+
+            franchiseSelect.value = '';
 
         }
 
@@ -419,6 +466,286 @@
         }
 
 
+        async function createInquiry(){
+
+            const parentName =
+                parentNameInput.value.trim();
+
+
+            const franchiseId =
+                Number(
+                    franchiseSelect.value
+                );
+
+
+            if(!parentName){
+
+                alert(
+                    'Please enter the parent or client name.'
+                );
+
+                parentNameInput.focus();
+
+                return;
+
+            }
+
+
+            if(!franchiseId){
+
+                alert(
+                    'Please select a franchise.'
+                );
+
+                franchiseSelect.focus();
+
+                return;
+
+            }
+
+
+            const authToken =
+                getAuthToken();
+
+
+            if(!authToken){
+
+                alert(
+                    'Your login session could not be found. Please log in again.'
+                );
+
+                return;
+
+            }
+
+
+            createInquiryButton.disabled =
+                true;
+
+
+            createInquiryButton.textContent =
+                'Creating...';
+
+
+            try{
+
+                const response =
+                    await fetch(
+                        INQUIRY_API,
+                        {
+                            method:
+                                'POST',
+
+                            headers:{
+                                'Content-Type':
+                                    'application/json',
+
+                                'Accept':
+                                    'application/json',
+
+                                'Authorization':
+                                    `Bearer ${authToken}`
+                            },
+
+                            body:
+                                JSON.stringify({
+                                    parent_name:
+                                        parentName,
+
+                                    franchise_id:
+                                        franchiseId,
+
+                                    source:
+                                        'Facebook',
+
+                                    status:
+                                        'new'
+                                })
+                        }
+                    );
+
+
+                if(!response.ok){
+
+                    const errorText =
+                        await response.text();
+
+
+                    throw new Error(
+                        errorText ||
+                        'Unable to create inquiry.'
+                    );
+
+                }
+
+
+                const result =
+                    await response.json();
+
+
+                const inquiry =
+                    result.qna_inquiry_history;
+
+
+                const franchise =
+                    franchiseSelect.options[
+                        franchiseSelect.selectedIndex
+                    ];
+
+
+                const franchiseName =
+                    franchise
+                        ? franchise.textContent
+                        : '';
+
+
+                addInquiryCard(
+                    inquiry,
+                    franchiseName
+                );
+
+
+                closeInquiry();
+
+            }
+            catch(error){
+
+                console.error(
+                    'Create inquiry failed:',
+                    error
+                );
+
+
+                alert(
+                    'Unable to create the inquiry. Please try again.'
+                );
+
+            }
+            finally{
+
+                createInquiryButton.disabled =
+                    false;
+
+                createInquiryButton.textContent =
+                    'Create Inquiry';
+
+            }
+
+        }
+
+
+        function addInquiryCard(
+            inquiry,
+            franchiseName
+        ){
+
+            emptyState.remove();
+
+
+            const card =
+                document.createElement(
+                    'article'
+                );
+
+
+            card.className =
+                'inquiry-card';
+
+
+            card.dataset.id =
+                inquiry.id;
+
+
+            const top =
+                document.createElement(
+                    'div'
+                );
+
+
+            top.className =
+                'inquiry-card-top';
+
+
+            const name =
+                document.createElement(
+                    'h3'
+                );
+
+
+            name.className =
+                'inquiry-card-name';
+
+
+            name.textContent =
+                inquiry.parent_name;
+
+
+            const status =
+                document.createElement(
+                    'span'
+                );
+
+
+            status.className =
+                'inquiry-status';
+
+
+            status.textContent =
+                inquiry.status;
+
+
+            top.appendChild(
+                name
+            );
+
+
+            top.appendChild(
+                status
+            );
+
+
+            const details =
+                document.createElement(
+                    'div'
+                );
+
+
+            details.className =
+                'inquiry-card-details';
+
+
+            details.innerHTML = `
+
+                <div>
+                    <span>Branch</span>
+                    <strong>${franchiseName}</strong>
+                </div>
+
+                <div>
+                    <span>Source</span>
+                    <strong>${inquiry.source}</strong>
+                </div>
+
+            `;
+
+
+            card.appendChild(
+                top
+            );
+
+
+            card.appendChild(
+                details
+            );
+
+
+            inquiryPanel.appendChild(
+                card
+            );
+
+        }
+
+
         newInquiryButton.addEventListener(
             'click',
             openInquiryModal
@@ -437,9 +764,15 @@
         );
 
 
+        createInquiryButton.addEventListener(
+            'click',
+            createInquiry
+        );
+
+
         newInquiryModal.addEventListener(
             'click',
-            (event)=>{
+            event =>{
 
                 if(
                     event.target ===
