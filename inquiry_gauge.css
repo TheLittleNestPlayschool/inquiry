@@ -9,33 +9,38 @@
     4 o'clock  = 1 hour
     8 o'clock  = 2 hours
 
-    The hand moves continuously through
-    the three-hour period.
+    The numbers sit OUTSIDE the gauge.
 */
 
 
 .inquiry-gauge{
     flex:
-        0 0 46px;
+        0 0 42px;
 
-    width:46px;
+    width:42px;
 
-    height:46px;
+    height:42px;
 
     display:flex;
 
     align-items:center;
 
     justify-content:center;
+
+    position:relative;
 }
 
+
+/* ==========================================
+   GAUGE FACE
+========================================== */
 
 .inquiry-gauge-face{
     position:relative;
 
-    width:44px;
+    width:34px;
 
-    height:44px;
+    height:34px;
 
     border:
         1px solid
@@ -65,7 +70,7 @@
 .gauge-label{
     position:absolute;
 
-    z-index:2;
+    z-index:5;
 
     font-size:8px;
 
@@ -82,10 +87,12 @@
 /*
     3 hours
     12 o'clock
+
+    Outside the top of the circle.
 */
 
 .gauge-label-3{
-    top:5px;
+    top:-8px;
 
     left:50%;
 
@@ -97,30 +104,34 @@
 /*
     1 hour
     4 o'clock
+
+    Outside the lower-right
+    of the circle.
 */
 
 .gauge-label-1{
-    right:5px;
+    right:-8px;
 
-    top:66%;
+    bottom:1px;
 
-    transform:
-        translateY(-50%);
+    transform:none;
 }
 
 
 /*
     2 hours
     8 o'clock
+
+    Outside the lower-left
+    of the circle.
 */
 
 .gauge-label-2{
-    left:5px;
+    left:-8px;
 
-    top:66%;
+    bottom:1px;
 
-    transform:
-        translateY(-50%);
+    transform:none;
 }
 
 
@@ -135,7 +146,7 @@
 
     width:2px;
 
-    height:16px;
+    height:12px;
 
     left:50%;
 
@@ -164,9 +175,9 @@
 
     z-index:4;
 
-    width:5px;
+    width:4px;
 
-    height:5px;
+    height:4px;
 
     left:50%;
 
