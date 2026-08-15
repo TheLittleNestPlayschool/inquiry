@@ -1,0 +1,56 @@
+/* background.css */
+.app-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  /* Vivid, high-contrast split gradient with sharper color transitions */
+  background: linear-gradient(
+    135deg, 
+    #3b0764 0%, 
+    #f472b6 25%, 
+    #ffffff 42%, 
+    #fb923c 55%, 
+    #2dd4bf 80%, 
+    #0f766e 100%
+  );
+}
+
+.cloud-blob {
+  position: absolute;
+  border-radius: 40%;
+  filter: blur(15px); /* Much tighter blur to create those distinct fuzzy boundary lines */
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+/* Sharp, vivid pink cloud bank on the upper-left with a crisp edge against white */
+.cloud-blob.top-left {
+  top: -5%;
+  left: -10%;
+  width: 60vw;
+  height: 50vh;
+  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(244, 114, 182, 0.95) 45%, rgba(219, 39, 119, 0.8) 75%, transparent 100%);
+}
+
+/* Sharp, vivid turquoise cloud bank on the upper-right with a distinct horizon/line */
+.cloud-blob.top-right {
+  top: 5%;
+  right: -10%;
+  width: 60vw;
+  height: 50vh;
+  background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(45, 212, 191, 0.95) 45%, rgba(13, 148, 136, 0.8) 75%, transparent 100%);
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.85) 0%, transparent 60%);
+  pointer-events: none;
+}
