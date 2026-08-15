@@ -1,64 +1,68 @@
 const FRANCHISE_API =
     'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/get_franchises';
 
-
 const INQUIRY_API =
     'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_inquiry_history';
 
+
+/* ==========================================
+   ELEMENTS
+========================================== */
 
 const newInquiryButton =
     document.getElementById(
         'newInquiryButton'
     );
 
-
-const newInquiryModal =
+const inquiryModal =
     document.getElementById(
-        'newInquiryModal'
+        'inquiryModal'
     );
-
 
 const closeInquiryModal =
     document.getElementById(
         'closeInquiryModal'
     );
 
-
-const cancelInquiry =
+const cancelInquiryButton =
     document.getElementById(
-        'cancelInquiry'
+        'cancelInquiryButton'
     );
 
+const inquiryForm =
+    document.getElementById(
+        'inquiryForm'
+    );
 
 const createInquiryButton =
     document.getElementById(
-        'createInquiry'
+        'createInquiryButton'
     );
-
 
 const parentNameInput =
     document.getElementById(
         'parentName'
     );
 
-
 const franchiseSelect =
     document.getElementById(
-        'franchise'
+        'franchiseSelect'
     );
-
 
 const inquiryPanel =
     document.getElementById(
         'inquiryPanel'
     );
 
-
 const emptyState =
     document.getElementById(
         'emptyState'
     );
 
+
+/* ==========================================
+   AUTH
+========================================== */
 
 function getAuthToken(){
 
@@ -69,13 +73,17 @@ function getAuthToken(){
 }
 
 
+/* ==========================================
+   OPEN MODAL
+========================================== */
+
 function openInquiryModal(){
 
-    newInquiryModal.classList.add(
+    inquiryModal.classList.add(
         'is-open'
     );
 
-    newInquiryModal.setAttribute(
+    inquiryModal.setAttribute(
         'aria-hidden',
         'false'
     );
@@ -87,23 +95,33 @@ function openInquiryModal(){
 }
 
 
+/* ==========================================
+   CLOSE MODAL
+========================================== */
+
 function closeInquiry(){
 
-    newInquiryModal.classList.remove(
+    inquiryModal.classList.remove(
         'is-open'
     );
 
-    newInquiryModal.setAttribute(
+    inquiryModal.setAttribute(
         'aria-hidden',
         'true'
     );
 
-    parentNameInput.value = '';
+    inquiryForm.reset();
 
-    franchiseSelect.value = '';
+    document.getElementById(
+        'source'
+    ).value = 'Facebook';
 
 }
 
+
+/* ==========================================
+   LOAD FRANCHISES
+========================================== */
 
 async function loadFranchises(){
 
@@ -261,6 +279,10 @@ async function loadFranchises(){
 }
 
 
+/* ==========================================
+   CREATE INQUIRY
+========================================== */
+
 async function createInquiry(){
 
     const parentName =
@@ -383,15 +405,15 @@ async function createInquiry(){
             result.qna_inquiry_history;
 
 
-        const franchise =
+        const selectedOption =
             franchiseSelect.options[
                 franchiseSelect.selectedIndex
             ];
 
 
         const franchiseName =
-            franchise
-                ? franchise.textContent
+            selectedOption
+                ? selectedOption.textContent
                 : '';
 
 
@@ -429,6 +451,10 @@ async function createInquiry(){
 
 }
 
+
+/* ==========================================
+   ADD INQUIRY CARD
+========================================== */
 
 function addInquiryCard(
     inquiry,
@@ -538,6 +564,10 @@ function addInquiryCard(
 }
 
 
+/* ==========================================
+   EVENTS
+========================================== */
+
 newInquiryButton.addEventListener(
     'click',
     openInquiryModal
@@ -550,25 +580,31 @@ closeInquiryModal.addEventListener(
 );
 
 
-cancelInquiry.addEventListener(
+cancelInquiryButton.addEventListener(
     'click',
     closeInquiry
 );
 
 
-createInquiryButton.addEventListener(
-    'click',
-    createInquiry
+inquiryForm.addEventListener(
+    'submit',
+    event => {
+
+        event.preventDefault();
+
+        createInquiry();
+
+    }
 );
 
 
-newInquiryModal.addEventListener(
+inquiryModal.addEventListener(
     'click',
     event => {
 
         if(
             event.target ===
-            newInquiryModal
+            inquiryModal
         ){
 
             closeInquiry();
