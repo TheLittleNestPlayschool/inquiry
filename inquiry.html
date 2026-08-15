@@ -55,9 +55,7 @@
     <main class="page">
 
 
-        <!-- ======================================
-             PAGE HEADER
-        ======================================= -->
+        <!-- PAGE HEADER -->
 
         <header class="page-header">
 
@@ -85,9 +83,7 @@
         </header>
 
 
-        <!-- ======================================
-             INQUIRY LIST
-        ======================================= -->
+        <!-- INQUIRY LIST -->
 
         <section
             id="inquiryPanel"
@@ -102,11 +98,11 @@
                 <div class="empty-state-content">
 
                     <h2 class="empty-state-title">
-                        No inquiries yet
+                        Loading inquiries...
                     </h2>
 
                     <p class="empty-state-text">
-                        Create a new inquiry to begin tracking a parent and their conversation with the playschool.
+                        Loading active inquiries.
                     </p>
 
                 </div>
@@ -136,7 +132,7 @@
         >
 
 
-            <!-- Modal Header -->
+            <!-- MODAL HEADER -->
 
             <div class="modal-header">
 
@@ -165,17 +161,12 @@
             </div>
 
 
-            <!-- ==================================
-                 FORM
-            =================================== -->
+            <!-- FORM -->
 
             <form
                 id="inquiryForm"
                 class="form"
             >
-
-
-                <!-- Parent / Client -->
 
                 <div class="form-group">
 
@@ -197,8 +188,6 @@
                 </div>
 
 
-                <!-- Franchise -->
-
                 <div class="form-group">
 
                     <label
@@ -214,15 +203,13 @@
                     >
 
                         <option value="">
-                            Select a branch
+                            Loading branches...
                         </option>
 
                     </select>
 
                 </div>
 
-
-                <!-- Source -->
 
                 <div class="form-group">
 
@@ -242,13 +229,10 @@
 
                 </div>
 
-
             </form>
 
 
-            <!-- ==================================
-                 MODAL FOOTER
-            =================================== -->
+            <!-- MODAL FOOTER -->
 
             <div class="modal-footer">
 
@@ -278,10 +262,11 @@
 
 
     <!-- ==========================================
-         INQUIRY JAVASCRIPT
+         INQUIRY APPLICATION
     =========================================== -->
 
     <script
+        type="module"
         src="inquiry.js"
     ></script>
 
