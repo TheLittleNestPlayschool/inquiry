@@ -1,99 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Inquiries</title>
 
-    <style>
+    <link
+        rel="stylesheet"
+        href="main.css"
+    >
 
-        *{
-            box-sizing:border-box;
-        }
-
-        body{
-            margin:0;
-            font-family:Arial, sans-serif;
-            background:#f5f7fa;
-            color:#1f2937;
-        }
-
-        .page{
-            max-width:1400px;
-            margin:0 auto;
-            padding:32px;
-        }
-
-        .page-header{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            margin-bottom:28px;
-        }
-
-        .page-title{
-            margin:0;
-            font-size:28px;
-            font-weight:600;
-        }
-
-        .page-subtitle{
-            margin:6px 0 0;
-            color:#6b7280;
-            font-size:14px;
-        }
-
-        .new-inquiry-button{
-            border:0;
-            border-radius:10px;
-            padding:12px 18px;
-            background:#1f2937;
-            color:white;
-            font-size:14px;
-            font-weight:600;
-            cursor:pointer;
-        }
-
-        .new-inquiry-button:hover{
-            opacity:.9;
-        }
-
-        .inquiry-panel{
-            background:white;
-            border:1px solid #e5e7eb;
-            border-radius:14px;
-            min-height:400px;
-            padding:24px;
-        }
-
-        .empty-state{
-            min-height:350px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            text-align:center;
-        }
-
-        .empty-state-content{
-            max-width:420px;
-        }
-
-        .empty-state-title{
-            margin:0 0 8px;
-            font-size:18px;
-            font-weight:600;
-        }
-
-        .empty-state-text{
-            margin:0;
-            color:#6b7280;
-            font-size:14px;
-            line-height:1.5;
-        }
-
-    </style>
 </head>
+
 
 <body>
 
@@ -102,6 +27,7 @@
         <header class="page-header">
 
             <div>
+
                 <h1 class="page-title">
                     Inquiries
                 </h1>
@@ -109,7 +35,9 @@
                 <p class="page-subtitle">
                     Manage parent inquiries and conversations.
                 </p>
+
             </div>
+
 
             <button
                 type="button"
@@ -146,6 +74,193 @@
     </main>
 
 
+    <!-- =========================================
+         New Inquiry Modal
+    ========================================== -->
+
+    <div
+        id="newInquiryModal"
+        class="modal"
+        aria-hidden="true"
+    >
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        New Inquiry
+                    </h2>
+
+                    <p>
+                        Enter the basic information for this inquiry.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeInquiryModal"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="form">
+
+                <div class="form-group">
+
+                    <label for="parentName">
+                        Parent / Client Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="parentName"
+                        placeholder="Enter parent or client name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="franchise">
+                        Franchise / Branch
+                    </label>
+
+                    <select id="franchise">
+
+                        <option value="">
+                            Select a branch
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="contactNumber">
+                        Contact Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="contactNumber"
+                        placeholder="Enter contact number"
+                    >
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="childName">
+                            Child Name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="childName"
+                            placeholder="Enter child's name"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="childAge">
+                            Child Age
+                        </label>
+
+                        <input
+                            type="text"
+                            id="childAge"
+                            placeholder="Age"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="inquirySource">
+                        Source
+                    </label>
+
+                    <select id="inquirySource">
+
+                        <option value="">
+                            Select source
+                        </option>
+
+                        <option value="facebook">
+                            Facebook
+                        </option>
+
+                        <option value="walk_in">
+                            Walk-in
+                        </option>
+
+                        <option value="referral">
+                            Referral
+                        </option>
+
+                        <option value="phone">
+                            Phone
+                        </option>
+
+                        <option value="other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="button-secondary"
+                    id="cancelInquiry"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    class="button-primary"
+                    id="createInquiry"
+                >
+                    Create Inquiry
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
     <script>
 
         const newInquiryButton =
@@ -153,16 +268,89 @@
                 'newInquiryButton'
             );
 
+
+        const newInquiryModal =
+            document.getElementById(
+                'newInquiryModal'
+            );
+
+
+        const closeInquiryModal =
+            document.getElementById(
+                'closeInquiryModal'
+            );
+
+
+        const cancelInquiry =
+            document.getElementById(
+                'cancelInquiry'
+            );
+
+
+        function openInquiryModal(){
+
+            newInquiryModal.classList.add(
+                'is-open'
+            );
+
+            newInquiryModal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+        }
+
+
+        function closeInquiry(){
+
+            newInquiryModal.classList.remove(
+                'is-open'
+            );
+
+            newInquiryModal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+        }
+
+
         newInquiryButton.addEventListener(
             'click',
-            ()=>{
-                console.log(
-                    'New inquiry'
-                );
+            openInquiryModal
+        );
+
+
+        closeInquiryModal.addEventListener(
+            'click',
+            closeInquiry
+        );
+
+
+        cancelInquiry.addEventListener(
+            'click',
+            closeInquiry
+        );
+
+
+        newInquiryModal.addEventListener(
+            'click',
+            (event)=>{
+
+                if(
+                    event.target ===
+                    newInquiryModal
+                ){
+
+                    closeInquiry();
+
+                }
+
             }
         );
 
     </script>
 
 </body>
+
 </html>
