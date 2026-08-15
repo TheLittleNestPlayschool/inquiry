@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Inquiries</title>
+
+    <link
+        rel="stylesheet"
+        href="inquiry.css"
+    >
+
+</head>
+
+
+<body>
+
+    <main class="page">
+
+        <header class="page-header">
+
+            <div>
+
+                <h1 class="page-title">
+                    Inquiries
+                </h1>
+
+                <p class="page-subtitle">
+                    Manage parent inquiries and conversations.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="new-inquiry-button"
+                id="newInquiryButton"
+            >
+                + New Inquiry
+            </button>
+
+        </header>
+
+
+        <section class="inquiry-panel">
+
+            <div class="empty-state">
+
+                <div class="empty-state-content">
+
+                    <h2 class="empty-state-title">
+                        No inquiries yet
+                    </h2>
+
+                    <p class="empty-state-text">
+                        Create a new inquiry to begin tracking a parent
+                        and their conversation with the playschool.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <div
+        id="newInquiryModal"
+        class="modal"
+        aria-hidden="true"
+    >
+
+        <div class="modal-card">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        New Inquiry
+                    </h2>
+
+                    <p>
+                        Enter the basic information for this inquiry.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="closeInquiryModal"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="form">
+
+                <div class="form-group">
+
+                    <label for="parentName">
+                        Parent / Client Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="parentName"
+                        placeholder="Enter parent or client name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="franchise">
+                        Franchise / Branch
+                    </label>
+
+                    <select id="franchise">
+
+                        <option value="">
+                            Loading branches...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="inquirySource">
+                        Source
+                    </label>
+
+                    <input
+                        type="text"
+                        id="inquirySource"
+                        value="Facebook"
+                        readonly
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="button-secondary"
+                    id="cancelInquiry"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    class="button-primary"
+                    id="createInquiry"
+                >
+                    Create Inquiry
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const FRANCHISE_API =
+            'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/get_franchises';
+
+
+        const newInquiryButton =
+            document.getElementById(
+                'newInquiryButton'
+            );
+
+
+        const newInquiryModal =
+            document.getElementById(
+                'newInquiryModal'
+            );
+
+
+        const closeInquiryModal =
+            document.getElementById(
+                'closeInquiryModal'
+            );
+
+
+        const cancelInquiry =
+            document.getElementById(
+                'cancelInquiry'
+            );
+
+
+        const franchiseSelect =
+            document.getElementById(
+                'franchise'
+            );
+
+
+        function getAuthToken(){
+
+            return localStorage.getItem(
+                'authToken'
+            );
+
+        }
+
+
+        function openInquiryModal(){
+
+            newInquiryModal.classList.add(
+                'is-open'
+            );
+
+            newInquiryModal.setAttribute(
+                'aria-hidden',
+                'false'
+            );
+
+            loadFranchises();
+
+        }
+
+
+        function closeInquiry(){
+
+            newInquiryModal.classList.remove(
+                'is-open'
+            );
+
+            newInquiryModal.setAttribute(
+                'aria-hidden',
+                'true'
+            );
+
+        }
+
+
+        async function loadFranchises(){
+
+            franchiseSelect.innerHTML = '';
+
+
+            const loadingOption =
+                document.createElement(
+                    'option'
+                );
+
+
+            loadingOption.value = '';
+
+            loadingOption.textContent =
+                'Loading branches...';
+
+
+            franchiseSelect.appendChild(
+                loadingOption
+            );
+
+
+            try{
+
+                const authToken =
+                    getAuthToken();
+
+
+                if(!authToken){
+
+                    throw new Error(
+                        'Authentication token not found.'
+                    );
+
+                }
+
+
+                const response =
+                    await fetch(
+                        FRANCHISE_API,
+                        {
+                            method:
+                                'GET',
+
+                            headers:{
+                                'Accept':
+                                    'application/json',
+
+                                'Authorization':
+                                    `Bearer ${authToken}`
+                            }
+                        }
+                    );
+
+
+                if(!response.ok){
+
+                    throw new Error(
+                        'Unable to load franchises.'
+                    );
+
+                }
+
+
+                const franchises =
+                    await response.json();
+
+
+                franchiseSelect.innerHTML = '';
+
+
+                const defaultOption =
+                    document.createElement(
+                        'option'
+                    );
+
+
+                defaultOption.value = '';
+
+                defaultOption.textContent =
+                    'Select a branch';
+
+
+                franchiseSelect.appendChild(
+                    defaultOption
+                );
+
+
+                franchises
+                    .filter(
+                        franchise =>
+                            franchise.status ===
+                            'active'
+                    )
+                    .sort(
+                        (a,b)=>
+                            a.name.localeCompare(
+                                b.name
+                            )
+                    )
+                    .forEach(
+                        franchise =>{
+
+                            const option =
+                                document.createElement(
+                                    'option'
+                                );
+
+
+                            option.value =
+                                franchise.id;
+
+
+                            option.textContent =
+                                franchise.name;
+
+
+                            franchiseSelect.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+            }
+            catch(error){
+
+                console.error(
+                    'Franchise load failed:',
+                    error
+                );
+
+
+                franchiseSelect.innerHTML = '';
+
+
+                const errorOption =
+                    document.createElement(
+                        'option'
+                    );
+
+
+                errorOption.value = '';
+
+                errorOption.textContent =
+                    'Unable to load branches';
+
+
+                franchiseSelect.appendChild(
+                    errorOption
+                );
+
+            }
+
+        }
+
+
+        newInquiryButton.addEventListener(
+            'click',
+            openInquiryModal
+        );
+
+
+        closeInquiryModal.addEventListener(
+            'click',
+            closeInquiry
+        );
+
+
+        cancelInquiry.addEventListener(
+            'click',
+            closeInquiry
+        );
+
+
+        newInquiryModal.addEventListener(
+            'click',
+            (event)=>{
+
+                if(
+                    event.target ===
+                    newInquiryModal
+                ){
+
+                    closeInquiry();
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
