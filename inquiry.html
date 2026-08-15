@@ -12,10 +12,16 @@
 
     <title>Inquiries</title>
 
+
+    <!-- Shared Application Background -->
+
     <link
         rel="stylesheet"
         href="background.css"
     >
+
+
+    <!-- Inquiry Page Styles -->
 
     <link
         rel="stylesheet"
@@ -27,7 +33,31 @@
 
 <body>
 
+
+    <!-- ==========================================
+         SHARED APPLICATION BACKGROUND
+    =========================================== -->
+
+    <div
+        class="app-background"
+        aria-hidden="true"
+    >
+
+        <div class="gradient-overlay"></div>
+
+    </div>
+
+
+    <!-- ==========================================
+         INQUIRY APPLICATION
+    =========================================== -->
+
     <main class="page">
+
+
+        <!-- ======================================
+             PAGE HEADER
+        ======================================= -->
 
         <header class="page-header">
 
@@ -45,9 +75,9 @@
 
 
             <button
-                type="button"
-                class="new-inquiry-button"
                 id="newInquiryButton"
+                class="new-inquiry-button"
+                type="button"
             >
                 + New Inquiry
             </button>
@@ -55,14 +85,18 @@
         </header>
 
 
+        <!-- ======================================
+             INQUIRY LIST
+        ======================================= -->
+
         <section
-            class="inquiry-panel"
             id="inquiryPanel"
+            class="inquiry-panel"
         >
 
             <div
-                class="empty-state"
                 id="emptyState"
+                class="empty-state"
             >
 
                 <div class="empty-state-content">
@@ -72,8 +106,7 @@
                     </h2>
 
                     <p class="empty-state-text">
-                        Create a new inquiry to begin tracking a parent
-                        and their conversation with the playschool.
+                        Create a new inquiry to begin tracking a parent and their conversation with the playschool.
                     </p>
 
                 </div>
@@ -85,21 +118,31 @@
     </main>
 
 
-    <!-- New Inquiry Modal -->
+    <!-- ==========================================
+         NEW INQUIRY MODAL
+    =========================================== -->
 
     <div
-        id="newInquiryModal"
+        id="inquiryModal"
         class="modal"
         aria-hidden="true"
     >
 
-        <div class="modal-card">
+        <div
+            class="modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="newInquiryTitle"
+        >
+
+
+            <!-- Modal Header -->
 
             <div class="modal-header">
 
                 <div>
 
-                    <h2>
+                    <h2 id="newInquiryTitle">
                         New Inquiry
                     </h2>
 
@@ -111,9 +154,9 @@
 
 
                 <button
-                    type="button"
-                    class="modal-close"
                     id="closeInquiryModal"
+                    class="modal-close"
+                    type="button"
                     aria-label="Close"
                 >
                     ×
@@ -122,33 +165,56 @@
             </div>
 
 
-            <div class="form">
+            <!-- ==================================
+                 FORM
+            =================================== -->
+
+            <form
+                id="inquiryForm"
+                class="form"
+            >
+
+
+                <!-- Parent / Client -->
 
                 <div class="form-group">
 
-                    <label for="parentName">
+                    <label
+                        for="parentName"
+                    >
                         Parent / Client Name
                     </label>
 
                     <input
                         type="text"
                         id="parentName"
+                        name="parent_name"
                         placeholder="Enter parent or client name"
+                        autocomplete="name"
+                        required
                     >
 
                 </div>
 
 
+                <!-- Franchise -->
+
                 <div class="form-group">
 
-                    <label for="franchise">
+                    <label
+                        for="franchiseSelect"
+                    >
                         Franchise / Branch
                     </label>
 
-                    <select id="franchise">
+                    <select
+                        id="franchiseSelect"
+                        name="franchise_id"
+                        required
+                    >
 
                         <option value="">
-                            Loading branches...
+                            Select a branch
                         </option>
 
                     </select>
@@ -156,39 +222,50 @@
                 </div>
 
 
+                <!-- Source -->
+
                 <div class="form-group">
 
-                    <label for="inquirySource">
+                    <label
+                        for="source"
+                    >
                         Source
                     </label>
 
                     <input
                         type="text"
-                        id="inquirySource"
+                        id="source"
+                        name="source"
                         value="Facebook"
                         readonly
                     >
 
                 </div>
 
-            </div>
 
+            </form>
+
+
+            <!-- ==================================
+                 MODAL FOOTER
+            =================================== -->
 
             <div class="modal-footer">
 
                 <button
-                    type="button"
+                    id="cancelInquiryButton"
                     class="button-secondary"
-                    id="cancelInquiry"
+                    type="button"
                 >
                     Cancel
                 </button>
 
 
                 <button
-                    type="button"
+                    id="createInquiryButton"
                     class="button-primary"
-                    id="createInquiry"
+                    type="submit"
+                    form="inquiryForm"
                 >
                     Create Inquiry
                 </button>
@@ -200,7 +277,13 @@
     </div>
 
 
-    <script src="inquiry.js"></script>
+    <!-- ==========================================
+         INQUIRY JAVASCRIPT
+    =========================================== -->
+
+    <script
+        src="inquiry.js"
+    ></script>
 
 </body>
 
