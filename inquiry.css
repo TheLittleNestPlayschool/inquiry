@@ -123,9 +123,9 @@ body{
 
     min-width:160px;
 
-    height:72px;
+    height:84px;
 
-    min-height:72px;
+    min-height:84px;
 
     padding:10px 12px;
 
@@ -224,7 +224,11 @@ body{
 
 
 .inquiry-card-details{
-    display:block;
+    display:flex;
+
+    flex-direction:column;
+
+    gap:3px;
 
     margin-top:4px;
 }
@@ -249,6 +253,17 @@ body{
     overflow:hidden;
 
     text-overflow:ellipsis;
+}
+
+
+.inquiry-card-timer{
+    color:#6b7280;
+
+    font-size:10px;
+
+    line-height:1.2;
+
+    font-weight:500;
 }
 
 
@@ -287,10 +302,12 @@ body{
         );
 
     backdrop-filter:
-        blur(14px);
+        blur(14px
+        );
 
     -webkit-backdrop-filter:
-        blur(14px);
+        blur(14px
+        );
 
     border:
         1px solid
@@ -371,10 +388,12 @@ body{
         );
 
     backdrop-filter:
-        blur(18px);
+        blur(18px
+        );
 
     -webkit-backdrop-filter:
-        blur(18px);
+        blur(18px
+        );
 
     border:
         1px solid
