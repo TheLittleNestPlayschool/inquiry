@@ -1,278 +1,102 @@
-const FRANCHISE_API =
-    'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/get_franchises';
+import {
+    getFranchises,
+    getActiveInquiries,
+    createInquiry
+} from './inquiry_api.js';
 
-const INQUIRY_API =
-    'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_inquiry_history';
 
-
-/* ==========================================
-   ELEMENTS
-========================================== */
-
-const newInquiryButton =
-    document.getElementById(
-        'newInquiryButton'
-    );
-
-const inquiryModal =
-    document.getElementById(
-        'inquiryModal'
-    );
-
-const closeInquiryModal =
-    document.getElementById(
-        'closeInquiryModal'
-    );
-
-const cancelInquiryButton =
-    document.getElementById(
-        'cancelInquiryButton'
-    );
-
-const inquiryForm =
-    document.getElementById(
-        'inquiryForm'
-    );
-
-const createInquiryButton =
-    document.getElementById(
-        'createInquiryButton'
-    );
-
-const parentNameInput =
-    document.getElementById(
-        'parentName'
-    );
-
-const franchiseSelect =
-    document.getElementById(
-        'franchiseSelect'
-    );
-
-const inquiryPanel =
-    document.getElementById(
-        'inquiryPanel'
-    );
-
-const emptyState =
-    document.getElementById(
-        'emptyState'
-    );
+import {
+    newInquiryButton,
+    inquiryModal,
+    closeInquiryModal,
+    cancelInquiryButton,
+    inquiryForm,
+    createInquiryButton,
+    parentNameInput,
+    franchiseSelect,
+    inquiryPanel,
+    openInquiryModal,
+    closeInquiry,
+    populateFranchises,
+    showFranchiseLoading,
+    showFranchiseError,
+    showLoadingState,
+    showEmptyState,
+    hideEmptyState,
+    clearInquiryCards,
+    addInquiryCard,
+    updateCardTimer
+} from './inquiry_ui.js';
 
 
 /* ==========================================
-   AUTH
+   STATE
 ========================================== */
 
-function getAuthToken(){
+let franchises = [];
 
-    return localStorage.getItem(
-        'authToken'
-    );
+let franchiseMap = {};
 
-}
+let timerInterval = null;
 
 
 /* ==========================================
-   OPEN MODAL
+   INITIALIZE
 ========================================== */
 
-function openInquiryModal(){
+async function initialize(){
 
-    inquiryModal.classList.add(
-        'is-open'
-    );
-
-    inquiryModal.setAttribute(
-        'aria-hidden',
-        'false'
-    );
-
-    parentNameInput.focus();
-
-    loadFranchises();
-
-}
-
-
-/* ==========================================
-   CLOSE MODAL
-========================================== */
-
-function closeInquiry(){
-
-    inquiryModal.classList.remove(
-        'is-open'
-    );
-
-    inquiryModal.setAttribute(
-        'aria-hidden',
-        'true'
-    );
-
-    inquiryForm.reset();
-
-    document.getElementById(
-        'source'
-    ).value = 'Facebook';
-
-}
-
-
-/* ==========================================
-   LOAD FRANCHISES
-========================================== */
-
-async function loadFranchises(){
-
-    franchiseSelect.innerHTML = '';
-
-
-    const loadingOption =
-        document.createElement(
-            'option'
-        );
-
-
-    loadingOption.value = '';
-
-    loadingOption.textContent =
-        'Loading branches...';
-
-
-    franchiseSelect.appendChild(
-        loadingOption
-    );
+    showLoadingState();
 
 
     try{
 
-        const authToken =
-            getAuthToken();
+        /*
+         * Load both datasets once.
+         */
+
+        const [
+            franchiseData,
+            inquiryData
+        ] =
+            await Promise.all([
+                getFranchises(),
+                getActiveInquiries()
+            ]);
 
 
-        if(!authToken){
-
-            throw new Error(
-                'Authentication token not found.'
-            );
-
-        }
+        franchises =
+            franchiseData || [];
 
 
-        const response =
-            await fetch(
-                FRANCHISE_API,
-                {
-                    method:'GET',
-
-                    headers:{
-                        'Accept':
-                            'application/json',
-
-                        'Authorization':
-                            `Bearer ${authToken}`
-                    }
-                }
-            );
+        buildFranchiseMap();
 
 
-        if(!response.ok){
-
-            throw new Error(
-                `Unable to load franchises. HTTP ${response.status}`
-            );
-
-        }
-
-
-        const franchises =
-            await response.json();
-
-
-        franchiseSelect.innerHTML = '';
-
-
-        const defaultOption =
-            document.createElement(
-                'option'
-            );
-
-
-        defaultOption.value = '';
-
-        defaultOption.textContent =
-            'Select a branch';
-
-
-        franchiseSelect.appendChild(
-            defaultOption
+        populateFranchises(
+            franchises
         );
 
 
-        franchises
-            .filter(
-                franchise =>
-                    franchise.status ===
-                    'active'
-            )
-            .sort(
-                (a,b) =>
-                    a.name.localeCompare(
-                        b.name
-                    )
-            )
-            .forEach(
-                franchise => {
-
-                    const option =
-                        document.createElement(
-                            'option'
-                        );
+        renderActiveInquiries(
+            inquiryData
+        );
 
 
-                    option.value =
-                        franchise.id;
-
-
-                    option.textContent =
-                        franchise.name;
-
-
-                    franchiseSelect.appendChild(
-                        option
-                    );
-
-                }
-            );
+        startTimer();
 
     }
     catch(error){
 
         console.error(
-            'Franchise load failed:',
+            'Inquiry initialization failed:',
             error
         );
 
 
-        franchiseSelect.innerHTML = '';
+        clearInquiryCards();
 
 
-        const errorOption =
-            document.createElement(
-                'option'
-            );
-
-
-        errorOption.value = '';
-
-        errorOption.textContent =
-            'Unable to load branches';
-
-
-        franchiseSelect.appendChild(
-            errorOption
-        );
+        showEmptyState();
 
     }
 
@@ -280,10 +104,139 @@ async function loadFranchises(){
 
 
 /* ==========================================
-   CREATE INQUIRY
+   FRANCHISE MAP
 ========================================== */
 
-async function createInquiry(){
+function buildFranchiseMap(){
+
+    franchiseMap = {};
+
+
+    franchises.forEach(
+        franchise => {
+
+            franchiseMap[
+                String(
+                    franchise.id
+                )
+            ] =
+                franchise.name;
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   RENDER ACTIVE INQUIRIES
+========================================== */
+
+function renderActiveInquiries(
+    inquiries
+){
+
+    clearInquiryCards();
+
+
+    if(
+        !inquiries ||
+        inquiries.length === 0
+    ){
+
+        showEmptyState();
+
+        return;
+
+    }
+
+
+    hideEmptyState();
+
+
+    inquiries.forEach(
+        inquiry => {
+
+            const franchiseName =
+                franchiseMap[
+                    String(
+                        inquiry.franchise_id
+                    )
+                ] ||
+                'Unknown Branch';
+
+
+            addInquiryCard(
+                inquiry,
+                franchiseName
+            );
+
+        }
+    );
+
+}
+
+
+/* ==========================================
+   TIMER
+========================================== */
+
+function updateAllTimers(){
+
+    const cards =
+        inquiryPanel.querySelectorAll(
+            '.inquiry-card'
+        );
+
+
+    cards.forEach(
+        card => {
+
+            const timestamp =
+                Number(
+                    card.dataset.lastActivity
+                );
+
+
+            updateCardTimer(
+                card,
+                timestamp
+            );
+
+        }
+    );
+
+}
+
+
+function startTimer(){
+
+    if(timerInterval){
+
+        clearInterval(
+            timerInterval
+        );
+
+    }
+
+
+    updateAllTimers();
+
+
+    timerInterval =
+        setInterval(
+            updateAllTimers,
+            30000
+        );
+
+}
+
+
+/* ==========================================
+   NEW INQUIRY
+========================================== */
+
+async function handleCreateInquiry(){
 
     const parentName =
         parentNameInput.value.trim();
@@ -321,21 +274,6 @@ async function createInquiry(){
     }
 
 
-    const authToken =
-        getAuthToken();
-
-
-    if(!authToken){
-
-        alert(
-            'Your login session could not be found. Please log in again.'
-        );
-
-        return;
-
-    }
-
-
     createInquiryButton.disabled =
         true;
 
@@ -346,75 +284,20 @@ async function createInquiry(){
 
     try{
 
-        const response =
-            await fetch(
-                INQUIRY_API,
-                {
-                    method:'POST',
-
-                    headers:{
-                        'Content-Type':
-                            'application/json',
-
-                        'Accept':
-                            'application/json',
-
-                        'Authorization':
-                            `Bearer ${authToken}`
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            parent_name:
-                                parentName,
-
-                            franchise_id:
-                                franchiseId,
-
-                            source:
-                                'Facebook',
-
-                            status:
-                                'new'
-
-                        })
-                }
-            );
-
-
-        if(!response.ok){
-
-            const errorText =
-                await response.text();
-
-
-            throw new Error(
-                errorText ||
-                'Unable to create inquiry.'
-            );
-
-        }
-
-
-        const result =
-            await response.json();
-
-
         const inquiry =
-            result.qna_inquiry_history;
-
-
-        const selectedOption =
-            franchiseSelect.options[
-                franchiseSelect.selectedIndex
-            ];
+            await createInquiry(
+                parentName,
+                franchiseId
+            );
 
 
         const franchiseName =
-            selectedOption
-                ? selectedOption.textContent
-                : '';
+            franchiseMap[
+                String(
+                    franchiseId
+                )
+            ] ||
+            'Unknown Branch';
 
 
         addInquiryCard(
@@ -444,6 +327,7 @@ async function createInquiry(){
         createInquiryButton.disabled =
             false;
 
+
         createInquiryButton.textContent =
             'Create Inquiry';
 
@@ -453,113 +337,55 @@ async function createInquiry(){
 
 
 /* ==========================================
-   ADD INQUIRY CARD
+   MODAL FRANCHISE LOADING
 ========================================== */
 
-function addInquiryCard(
-    inquiry,
-    franchiseName
-){
+async function prepareNewInquiry(){
 
-    if(emptyState){
+    openInquiryModal();
 
-        emptyState.remove();
+
+    if(
+        franchises.length > 0
+    ){
+
+        populateFranchises(
+            franchises
+        );
+
+        return;
 
     }
 
 
-    const card =
-        document.createElement(
-            'article'
+    showFranchiseLoading();
+
+
+    try{
+
+        franchises =
+            await getFranchises();
+
+
+        buildFranchiseMap();
+
+
+        populateFranchises(
+            franchises
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            'Franchise load failed:',
+            error
         );
 
 
-    card.className =
-        'inquiry-card';
+        showFranchiseError();
 
-
-    card.dataset.id =
-        inquiry.id;
-
-
-    const top =
-        document.createElement(
-            'div'
-        );
-
-
-    top.className =
-        'inquiry-card-top';
-
-
-    const name =
-        document.createElement(
-            'h3'
-        );
-
-
-    name.className =
-        'inquiry-card-name';
-
-
-    name.textContent =
-        inquiry.parent_name;
-
-
-    top.appendChild(
-        name
-    );
-
-
-    const details =
-        document.createElement(
-            'div'
-        );
-
-
-    details.className =
-        'inquiry-card-details';
-
-
-    const branch =
-        document.createElement(
-            'div'
-        );
-
-
-    const branchName =
-        document.createElement(
-            'strong'
-        );
-
-
-    branchName.textContent =
-        franchiseName;
-
-
-    branch.appendChild(
-        branchName
-    );
-
-
-    details.appendChild(
-        branch
-    );
-
-
-    card.appendChild(
-        top
-    );
-
-
-    card.appendChild(
-        details
-    );
-
-
-    inquiryPanel.appendChild(
-        card
-    );
+    }
 
 }
 
@@ -570,7 +396,7 @@ function addInquiryCard(
 
 newInquiryButton.addEventListener(
     'click',
-    openInquiryModal
+    prepareNewInquiry
 );
 
 
@@ -592,7 +418,7 @@ inquiryForm.addEventListener(
 
         event.preventDefault();
 
-        createInquiry();
+        handleCreateInquiry();
 
     }
 );
@@ -613,3 +439,10 @@ inquiryModal.addEventListener(
 
     }
 );
+
+
+/* ==========================================
+   START
+========================================== */
+
+initialize();
