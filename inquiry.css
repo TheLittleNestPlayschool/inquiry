@@ -320,50 +320,33 @@ body{
 
 
 /* ==========================================
-   GAUGE POSITION MARKERS
+   GAUGE LABELS
 ========================================== */
 
-.gauge-marker{
+.gauge-label{
     position:absolute;
 
-    width:3px;
+    z-index:2;
 
-    height:3px;
+    font-size:8px;
 
-    border-radius:50%;
+    line-height:1;
 
-    background:
-        rgba(
-            31,
-            41,
-            55,
-            .35
-        );
-}
+    font-weight:600;
 
+    color:#6b7280;
 
-/*
-   0 hours
-   Top
-*/
-
-.gauge-marker-0{
-    left:50%;
-
-    top:3px;
-
-    transform:
-        translateX(-50%);
+    pointer-events:none;
 }
 
 
 /*
    1 hour
-   4 o'clock
+   4 o'clock position
 */
 
-.gauge-marker-1{
-    right:4px;
+.gauge-label-1{
+    right:6px;
 
     top:50%;
 
@@ -374,11 +357,11 @@ body{
 
 /*
    2 hours
-   8 o'clock
+   8 o'clock position
 */
 
-.gauge-marker-2{
-    left:4px;
+.gauge-label-2{
+    left:6px;
 
     top:50%;
 
