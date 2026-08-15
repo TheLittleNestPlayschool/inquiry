@@ -7,54 +7,45 @@ export const newInquiryButton =
         'newInquiryButton'
     );
 
-
 export const inquiryModal =
     document.getElementById(
         'inquiryModal'
     );
-
 
 export const closeInquiryModal =
     document.getElementById(
         'closeInquiryModal'
     );
 
-
 export const cancelInquiryButton =
     document.getElementById(
         'cancelInquiryButton'
     );
-
 
 export const inquiryForm =
     document.getElementById(
         'inquiryForm'
     );
 
-
 export const createInquiryButton =
     document.getElementById(
         'createInquiryButton'
     );
-
 
 export const parentNameInput =
     document.getElementById(
         'parentName'
     );
 
-
 export const franchiseSelect =
     document.getElementById(
         'franchiseSelect'
     );
 
-
 export const inquiryPanel =
     document.getElementById(
         'inquiryPanel'
     );
-
 
 export const emptyState =
     document.getElementById(
@@ -128,7 +119,6 @@ export function populateFranchises(
             'option'
         );
 
-
     defaultOption.value = '';
 
     defaultOption.textContent =
@@ -160,10 +150,8 @@ export function populateFranchises(
                         'option'
                     );
 
-
                 option.value =
                     franchise.id;
-
 
                 option.textContent =
                     franchise.name;
@@ -180,7 +168,7 @@ export function populateFranchises(
 
 
 /* ==========================================
-   FRANCHISE LOADING STATE
+   FRANCHISE LOADING
 ========================================== */
 
 export function showFranchiseLoading(){
@@ -192,7 +180,6 @@ export function showFranchiseLoading(){
         document.createElement(
             'option'
         );
-
 
     option.value = '';
 
@@ -216,7 +203,6 @@ export function showFranchiseError(){
         document.createElement(
             'option'
         );
-
 
     option.value = '';
 
@@ -248,7 +234,6 @@ export function showLoadingState(){
         emptyState.querySelector(
             '.empty-state-title'
         );
-
 
     const text =
         emptyState.querySelector(
@@ -291,7 +276,6 @@ export function showEmptyState(){
         emptyState.querySelector(
             '.empty-state-title'
         );
-
 
     const text =
         emptyState.querySelector(
@@ -427,24 +411,28 @@ export function formatElapsedTime(
 
 
 /* ==========================================
-   THREE-HOUR CLOCK
+   THREE-HOUR GAUGE
 ========================================== */
 
 /*
-   Clock mapping:
+   The gauge represents 3 hours.
 
-   12 o'clock = 0 hours
-   4 o'clock  = 1 hour
-   8 o'clock  = 2 hours
-   12 o'clock = 3 hours
+   0 hours  = 12 o'clock / top
+   1 hour   = 4 o'clock
+   2 hours  = 8 o'clock
+   3 hours  = 12 o'clock / top again
 
-   Therefore one complete rotation
-   represents three hours.
+   One complete rotation = 3 hours.
 
-   CSS rotation starts at 12 o'clock.
+   Therefore:
+
+   60 minutes  = 120 degrees
+   120 minutes = 240 degrees
+   180 minutes = 360 degrees
 */
 
-function getClockRotation(
+
+function getGaugeRotation(
     timestamp
 ){
 
@@ -460,11 +448,6 @@ function getClockRotation(
         60 *
         1000;
 
-
-    /*
-     * Keep the hand at 12 after
-     * the three-hour window.
-     */
 
     if(
         elapsed >=
@@ -486,32 +469,28 @@ function getClockRotation(
 
 
 /* ==========================================
-   CREATE CLOCK
+   CREATE GAUGE
 ========================================== */
 
-function createInquiryClock(
+function createInquiryGauge(
     timestamp
 ){
 
-    const clock =
+    const gauge =
         document.createElement(
             'div'
         );
 
 
-    clock.className =
-        'inquiry-clock';
+    gauge.className =
+        'inquiry-gauge';
 
 
-    clock.setAttribute(
+    gauge.setAttribute(
         'aria-hidden',
         'true'
     );
 
-
-    /*
-     * Clock face
-     */
 
     const face =
         document.createElement(
@@ -520,94 +499,90 @@ function createInquiryClock(
 
 
     face.className =
-        'inquiry-clock-face';
+        'inquiry-gauge-face';
 
 
     /*
-     * Number positions
+     * Position markers.
+     *
+     * Top       = 0
+     * 4 o'clock = 1
+     * 8 o'clock = 2
      */
 
-    const twelve =
+    const marker0 =
         document.createElement(
             'span'
         );
 
-
-    twelve.className =
-        'clock-number clock-number-12';
-
-    twelve.textContent =
-        '12';
+    marker0.className =
+        'gauge-marker gauge-marker-0';
 
 
-    const four =
+    const marker1 =
         document.createElement(
             'span'
         );
 
-
-    four.className =
-        'clock-number clock-number-4';
-
-    four.textContent =
-        '4';
+    marker1.className =
+        'gauge-marker gauge-marker-1';
 
 
-    const eight =
+    const marker2 =
         document.createElement(
             'span'
         );
 
-
-    eight.className =
-        'clock-number clock-number-8';
-
-    eight.textContent =
-        '8';
+    marker2.className =
+        'gauge-marker gauge-marker-2';
 
 
     /*
-     * Hand
+     * Hand.
+     *
+     * IMPORTANT:
+     * The bottom of the hand is anchored
+     * at the exact center of the gauge.
+     *
+     * That means 0 degrees points straight up.
      */
 
     const hand =
         document.createElement(
-            'div'
+            'span'
         );
 
-
     hand.className =
-        'inquiry-clock-hand';
+        'inquiry-gauge-hand';
 
 
     hand.style.transform =
-        `translateX(-50%) rotate(${getClockRotation(timestamp)}deg)`;
+        `translateX(-50%) rotate(${getGaugeRotation(timestamp)}deg)`;
 
 
     /*
-     * Center
+     * Center pivot
      */
 
     const center =
         document.createElement(
-            'div'
+            'span'
         );
 
-
     center.className =
-        'inquiry-clock-center';
+        'inquiry-gauge-center';
 
 
     face.appendChild(
-        twelve
+        marker0
     );
 
     face.appendChild(
-        four
+        marker1
     );
 
     face.appendChild(
-        eight
+        marker2
     );
 
     face.appendChild(
@@ -619,18 +594,18 @@ function createInquiryClock(
     );
 
 
-    clock.appendChild(
+    gauge.appendChild(
         face
     );
 
 
-    return clock;
+    return gauge;
 
 }
 
 
 /* ==========================================
-   UPDATE CLOCK
+   UPDATE CARD
 ========================================== */
 
 export function updateCardTimer(
@@ -656,14 +631,14 @@ export function updateCardTimer(
 
     const hand =
         card.querySelector(
-            '.inquiry-clock-hand'
+            '.inquiry-gauge-hand'
         );
 
 
     if(hand){
 
         hand.style.transform =
-            `translateX(-50%) rotate(${getClockRotation(timestamp)}deg)`;
+            `translateX(-50%) rotate(${getGaugeRotation(timestamp)}deg)`;
 
     }
 
@@ -775,11 +750,11 @@ export function addInquiryCard(
 
 
     /*
-     * Right side clock
+     * Right side gauge
      */
 
-    const clock =
-        createInquiryClock(
+    const gauge =
+        createInquiryGauge(
             inquiry.last_activity_at
         );
 
@@ -790,7 +765,7 @@ export function addInquiryCard(
 
 
     card.appendChild(
-        clock
+        gauge
     );
 
 
