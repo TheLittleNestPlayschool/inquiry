@@ -199,13 +199,13 @@ async function loadFranchises(){
                     'active'
             )
             .sort(
-                (a,b)=>
+                (a,b) =>
                     a.name.localeCompare(
                         b.name
                     )
             )
             .forEach(
-                franchise =>{
+                franchise => {
 
                     const option =
                         document.createElement(
@@ -480,27 +480,8 @@ function addInquiryCard(
         inquiry.parent_name;
 
 
-    const status =
-        document.createElement(
-            'span'
-        );
-
-
-    status.className =
-        'inquiry-status';
-
-
-    status.textContent =
-        inquiry.status;
-
-
     top.appendChild(
         name
-    );
-
-
-    top.appendChild(
-        status
     );
 
 
@@ -520,33 +501,23 @@ function addInquiryCard(
         );
 
 
-    branch.innerHTML =
-        `
-            <span>Branch</span>
-            <strong>${franchiseName}</strong>
-        `;
-
-
-    const source =
+    const branchName =
         document.createElement(
-            'div'
+            'strong'
         );
 
 
-    source.innerHTML =
-        `
-            <span>Source</span>
-            <strong>${inquiry.source}</strong>
-        `;
+    branchName.textContent =
+        franchiseName;
 
 
-    details.appendChild(
-        branch
+    branch.appendChild(
+        branchName
     );
 
 
     details.appendChild(
-        source
+        branch
     );
 
 
@@ -593,7 +564,7 @@ createInquiryButton.addEventListener(
 
 newInquiryModal.addEventListener(
     'click',
-    event =>{
+    event => {
 
         if(
             event.target ===
