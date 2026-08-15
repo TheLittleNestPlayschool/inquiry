@@ -323,6 +323,16 @@ body{
    GAUGE LABELS
 ========================================== */
 
+/*
+    The gauge is NOT a normal clock.
+
+    12 o'clock = 0 hours
+    4 o'clock  = 1 hour
+    8 o'clock  = 2 hours
+    12 o'clock = 3 hours
+*/
+
+
 .gauge-label{
     position:absolute;
 
@@ -341,14 +351,16 @@ body{
 
 
 /*
-   1 hour
-   4 o'clock position
+    1 hour
+
+    Positioned at approximately
+    the 4 o'clock location.
 */
 
 .gauge-label-1{
-    right:6px;
+    right:5px;
 
-    top:50%;
+    top:66%;
 
     transform:
         translateY(-50%);
@@ -356,14 +368,16 @@ body{
 
 
 /*
-   2 hours
-   8 o'clock position
+    2 hours
+
+    Positioned at approximately
+    the 8 o'clock location.
 */
 
 .gauge-label-2{
-    left:6px;
+    left:5px;
 
-    top:50%;
+    top:66%;
 
     transform:
         translateY(-50%);
