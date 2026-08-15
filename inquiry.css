@@ -1,237 +1,66 @@
-*{
-    box-sizing:border-box;
-}
+/* Inquiry Card */
 
-
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#f5f7fa;
-    color:#1f2937;
-}
-
-
-.page{
-    max-width:1400px;
-    margin:0 auto;
-    padding:32px;
-}
-
-
-/* Page Header */
-
-.page-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:28px;
-}
-
-
-.page-title{
-    margin:0;
-    font-size:28px;
-    font-weight:600;
-}
-
-
-.page-subtitle{
-    margin:6px 0 0;
-    color:#6b7280;
-    font-size:14px;
-}
-
-
-.new-inquiry-button{
-    border:0;
-    border-radius:10px;
-    padding:12px 18px;
-    background:#1f2937;
-    color:white;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-}
-
-
-.new-inquiry-button:hover{
-    opacity:.9;
-}
-
-
-/* Inquiry Panel */
-
-.inquiry-panel{
-    background:white;
+.inquiry-card{
+    background:#ffffff;
     border:1px solid #e5e7eb;
-    border-radius:14px;
-    min-height:400px;
-    padding:24px;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:12px;
 }
 
 
-.empty-state{
-    min-height:350px;
+.inquiry-card-top{
     display:flex;
     align-items:center;
-    justify-content:center;
-    text-align:center;
-}
-
-
-.empty-state-content{
-    max-width:420px;
-}
-
-
-.empty-state-title{
-    margin:0 0 8px;
-    font-size:18px;
-    font-weight:600;
-}
-
-
-.empty-state-text{
-    margin:0;
-    color:#6b7280;
-    font-size:14px;
-    line-height:1.5;
-}
-
-
-/* Modal */
-
-.modal{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,.45);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    z-index:1000;
-}
-
-
-.modal.is-open{
-    display:flex;
-}
-
-
-.modal-card{
-    width:100%;
-    max-width:620px;
-    background:white;
-    border-radius:16px;
-    box-shadow:0 20px 60px rgba(0,0,0,.2);
-    overflow:hidden;
-}
-
-
-/* Modal Header */
-
-.modal-header{
-    display:flex;
-    align-items:flex-start;
     justify-content:space-between;
-    padding:24px;
-    border-bottom:1px solid #e5e7eb;
+    gap:16px;
 }
 
 
-.modal-header h2{
+.inquiry-card-name{
     margin:0;
-    font-size:20px;
+    font-size:16px;
     font-weight:600;
 }
 
 
-.modal-header p{
-    margin:6px 0 0;
-    color:#6b7280;
-    font-size:14px;
-}
-
-
-.modal-close{
-    border:0;
-    background:transparent;
-    font-size:28px;
-    line-height:1;
-    color:#6b7280;
-    cursor:pointer;
-    padding:0;
-}
-
-
-/* Form */
-
-.form{
-    padding:24px;
-}
-
-
-.form-group{
-    margin-bottom:18px;
-}
-
-
-.form-group label{
-    display:block;
-    margin-bottom:7px;
-    font-size:13px;
-    font-weight:600;
-}
-
-
-.form-group input,
-.form-group select{
-    width:100%;
-    height:42px;
-    padding:0 12px;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    background:white;
-    font-size:14px;
-    outline:none;
-}
-
-
-.form-group input:focus,
-.form-group select:focus{
-    border-color:#9ca3af;
-}
-
-
-/* Modal Footer */
-
-.modal-footer{
-    display:flex;
-    justify-content:flex-end;
-    gap:10px;
-    padding:18px 24px;
-    border-top:1px solid #e5e7eb;
-}
-
-
-.button-secondary,
-.button-primary{
-    border:0;
-    border-radius:8px;
-    padding:10px 16px;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-}
-
-
-.button-secondary{
+.inquiry-status{
+    display:inline-flex;
+    align-items:center;
+    padding:4px 9px;
+    border-radius:999px;
     background:#f3f4f6;
     color:#374151;
+    font-size:12px;
+    font-weight:600;
+    text-transform:capitalize;
 }
 
 
-.button-primary{
-    background:#1f2937;
-    color:white;
+.inquiry-card-details{
+    display:flex;
+    gap:32px;
+    margin-top:14px;
+}
+
+
+.inquiry-card-details div{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+
+.inquiry-card-details span{
+    color:#9ca3af;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+}
+
+
+.inquiry-card-details strong{
+    color:#374151;
+    font-size:13px;
+    font-weight:500;
 }
