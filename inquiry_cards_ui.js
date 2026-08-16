@@ -20,6 +20,10 @@ import {
     updateInquiryGauge
 } from './inquiry_gauge_ui.js';
 
+import {
+    openInquiryWorkspace
+} from './inquiry_workspace.js';
+
 
 /* ==========================================
    API
@@ -234,6 +238,26 @@ export function addInquiryCard(
     card.dataset.lastActivity =
         inquiry.last_activity_at ||
         0;
+
+
+    /* ======================================
+       OPEN WORKSPACE
+    ====================================== */
+
+    card.addEventListener(
+        'click',
+        () => {
+
+            openInquiryWorkspace(
+                {
+                    ...inquiry,
+                    franchise_name:
+                        franchiseName
+                }
+            );
+
+        }
+    );
 
 
     /* ======================================
