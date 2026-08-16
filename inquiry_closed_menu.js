@@ -1,4 +1,3 @@
-
 import {
     getClosedInquiries
 } from './inquiry_api.js';
@@ -105,7 +104,7 @@ function openClosedLookup(){
     menuContainer.setAttribute('aria-hidden','false');
 }
 
-function closeClosedLookup(){
+export function closeClosedLookup(){
     menuContainer.classList.remove('is-open');
     menuContainer.setAttribute('aria-hidden','true');
 }
