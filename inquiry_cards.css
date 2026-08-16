@@ -1,100 +1,36 @@
-
 /* ==========================================
    INQUIRY CARD
 ========================================== */
 
 .inquiry-card{
     width:160px;
-
     min-width:160px;
-
     height:84px;
-
     min-height:84px;
-
-    padding:
-        10px
-        8px
-        10px
-        12px;
-
+    padding:10px 8px 10px 12px;
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
-
     gap:6px;
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            .85
-        );
-
+    border:1px solid rgba(255,255,255,.85);
     border-radius:9px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            .78
-        );
-
-    backdrop-filter:
-        blur(14px);
-
-    -webkit-backdrop-filter:
-        blur(14px);
-
-    box-shadow:
-        0 3px 10px
-        rgba(
-            0,
-            0,
-            0,
-            .08
-        );
-
+    background:rgba(224,242,216,.78);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
     cursor:pointer;
-
     overflow:hidden;
-
     transition:
         transform .15s ease,
         box-shadow .15s ease,
         background .15s ease;
 }
 
-
 .inquiry-card:hover{
-    transform:
-        translateY(
-            -1px
-        );
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            .88
-        );
-
-    box-shadow:
-        0 5px 14px
-        rgba(
-            0,
-            0,
-            0,
-            .12
-        );
+    transform:translateY(-1px);
+    background:rgba(232,246,226,.88);
+    box-shadow:0 5px 14px rgba(0,0,0,.12);
 }
-
 
 /* ==========================================
    CARD CONTENT
@@ -102,56 +38,35 @@
 
 .inquiry-card-content{
     min-width:0;
-
     flex:1;
 }
 
-
 .inquiry-card-name{
     margin:0;
-
     font-size:13px;
-
     line-height:1.3;
-
     font-weight:700;
-
     color:#111827;
-
     white-space:nowrap;
-
     overflow:hidden;
-
     text-overflow:ellipsis;
 }
-
 
 .inquiry-card-branch{
     margin-top:5px;
-
     color:#4b5563;
-
     font-size:11px;
-
     line-height:1.2;
-
     white-space:nowrap;
-
     overflow:hidden;
-
     text-overflow:ellipsis;
 }
 
-
 .inquiry-card-timer{
     margin-top:5px;
-
     color:#6b7280;
-
     font-size:10px;
-
     line-height:1.2;
-
     font-weight:500;
 }
 
@@ -161,79 +76,33 @@
 
 .inquiry-card-close{
     margin-top:6px;
-
     padding:3px 9px;
-
-    border:1px solid rgba(
-        31,
-        41,
-        55,
-        .18
-    );
-
+    border:1px solid rgba(255,255,255,.7);
     border-radius:7px;
-
-    background:rgba(
-        255,
-        255,
-        255,
-        .55
-    );
-
-    color:#374151;
-
+    background:#9bc98a;
+    color:#000000;
     font-family:inherit;
-
     font-size:10px;
-
     font-weight:600;
-
     line-height:1.2;
-
     cursor:pointer;
-
-    backdrop-filter:blur(4px);
-
-    -webkit-backdrop-filter:blur(4px);
-
+    box-shadow:0 2px 6px rgba(31,41,55,.06);
     transition:
         background .15s ease,
         border-color .15s ease,
         transform .15s ease;
 }
 
-
 .inquiry-card-close:hover{
-    background:rgba(
-        255,
-        255,
-        255,
-        .78
-    );
-
-    border-color:rgba(
-        31,
-        41,
-        55,
-        .28
-    );
+    background:#a8d398;
+    border-color:rgba(255,255,255,.85);
 }
-
 
 .inquiry-card-close:active{
     transform:scale(.96);
 }
 
-
 .inquiry-card-close:focus-visible{
-    outline:
-        2px solid
-        rgba(
-            59,
-            7,
-            100,
-            .35
-        );
-
+    outline:2px solid rgba(88,130,72,.35);
     outline-offset:2px;
 }
