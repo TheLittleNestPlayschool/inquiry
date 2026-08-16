@@ -2,8 +2,8 @@ import {
     getFranchises,
     getActiveInquiries,
     getClosedInquiries,
-    createInquiry,
     reopenInquiry
+    createInquiry
 } from './inquiry_api.js';
 
 import {
@@ -31,7 +31,8 @@ import {
 
 import {
     setClosedLookupResults,
-    getClosedInquirySelect
+    getClosedInquirySelect,
+    closeClosedLookup
 } from './inquiry_closed_menu.js';
 
 /* STATE */
@@ -162,12 +163,9 @@ async function handleClosedInquirySearch(
 ){
     const {
         from,
-        to
+        to,
+        button
     }=event.detail;
-
-    if(!from || !to){
-        return;
-    }
 
     try{
         const records=
@@ -187,8 +185,13 @@ async function handleClosedInquirySearch(
         );
 
         alert(
-            'Unable to search closed inquiries. Please try again.'
+            'Unable to load closed inquiries. Please try again.'
         );
+
+        if(button){
+            button.disabled=false;
+            button.textContent='Search';
+        }
     }
 }
 
@@ -213,9 +216,13 @@ async function handleClosedInquirySelection(){
             selectedOption.value
         );
 
-    try{
-        select.disabled=true;
+    if(!inquiryId){
+        return;
+    }
 
+    select.disabled=true;
+
+    try{
         await reopenInquiry(
             inquiryId
         );
@@ -226,6 +233,8 @@ async function handleClosedInquirySelection(){
         renderActiveInquiries(
             inquiryData
         );
+
+        closeClosedLookup();
     }
     catch(error){
         console.error(
