@@ -1,16 +1,15 @@
 /* CLOSED INQUIRY LOOKUP MENU */
 
-const menuContainer = document.createElement('div');
-menuContainer.className = 'closed-lookup-menu';
+const menuContainer=document.createElement('div');
+menuContainer.className='closed-lookup-menu';
 menuContainer.setAttribute('aria-hidden','true');
 
-menuContainer.innerHTML = `
+menuContainer.innerHTML=`
     <div class="closed-lookup-header">
         <div>
             <h3>Lookup Closed</h3>
             <p>Find a previous conversation.</p>
         </div>
-
         <button
             type="button"
             class="closed-lookup-close"
@@ -50,9 +49,7 @@ menuContainer.innerHTML = `
             Parent / Client Name
         </label>
 
-        <select
-            id="closedNameSelect"
-        >
+        <select id="closedNameSelect">
             <option value="">
                 Select a conversation
             </option>
@@ -62,111 +59,60 @@ menuContainer.innerHTML = `
 
 document.body.appendChild(menuContainer);
 
-const lookupButton =
-    document.getElementById(
-        'lookupClosedButton'
-    );
+const lookupButton=document.getElementById('lookupClosedButton');
+const closeButton=menuContainer.querySelector('.closed-lookup-close');
+const fromDate=menuContainer.querySelector('#closedFromDate');
+const toDate=menuContainer.querySelector('#closedToDate');
+const dateSearchButton=menuContainer.querySelector('#closedDateSearch');
+const nameSearchContainer=menuContainer.querySelector('#closedNameSearchContainer');
+const nameSelect=menuContainer.querySelector('#closedNameSelect');
 
-const closeButton =
-    menuContainer.querySelector(
-        '.closed-lookup-close'
-    );
-
-const fromDate =
-    menuContainer.querySelector(
-        '#closedFromDate'
-    );
-
-const toDate =
-    menuContainer.querySelector(
-        '#closedToDate'
-    );
-
-const dateSearchButton =
-    menuContainer.querySelector(
-        '#closedDateSearch'
-    );
-
-const nameSearchContainer =
-    menuContainer.querySelector(
-        '#closedNameSearchContainer'
-    );
-
-const nameSelect =
-    menuContainer.querySelector(
-        '#closedNameSelect'
-    );
+const HISTORY_API=
+    'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_get_history';
 
 /* DATE HELPERS */
 
 function formatDateInput(date){
-    const year =
-        date.getFullYear();
-
-    const month =
-        String(
-            date.getMonth() + 1
-        ).padStart(2,'0');
-
-    const day =
-        String(
-            date.getDate()
-        ).padStart(2,'0');
+    const year=date.getFullYear();
+    const month=String(date.getMonth()+1).padStart(2,'0');
+    const day=String(date.getDate()).padStart(2,'0');
 
     return `${year}-${month}-${day}`;
 }
 
+function dateInputToEpoch(value){
+    const date=new Date(`${value}T00:00:00`);
+    return date.getTime();
+}
+
 function setDefaultDates(){
-    const today =
-        new Date();
+    const today=formatDateInput(new Date());
 
-    const todayValue =
-        formatDateInput(
-            today
-        );
-
-    fromDate.value =
-        todayValue;
-
-    toDate.value =
-        todayValue;
+    fromDate.value=today;
+    toDate.value=today;
 }
 
 /* MENU VISIBILITY */
 
 function openClosedLookup(){
     setDefaultDates();
-
     clearNameResults();
 
-    menuContainer.classList.add(
-        'is-open'
-    );
-
-    menuContainer.setAttribute(
-        'aria-hidden',
-        'false'
-    );
+    menuContainer.classList.add('is-open');
+    menuContainer.setAttribute('aria-hidden','false');
 }
 
 function closeClosedLookup(){
-    menuContainer.classList.remove(
-        'is-open'
-    );
-
-    menuContainer.setAttribute(
-        'aria-hidden',
-        'true'
-    );
+    menuContainer.classList.remove('is-open');
+    menuContainer.setAttribute('aria-hidden','true');
 }
 
 /* CLEAR NAME RESULTS */
 
 function clearNameResults(){
-    nameSearchContainer.hidden =
-        true;
+    nameSearchContainer.hidden=true;
 
-    nameSelect.innerHTML = `
+    nameSelect.innerHTML=`
         <option value="">
             Select a conversation
         </option>
@@ -175,92 +121,121 @@ function clearNameResults(){
 
 /* SEARCH CLOSED RECORDS */
 
-function requestClosedRecords(){
-    const from =
-        fromDate.value;
-
-    const to =
-        toDate.value;
+async function requestClosedRecords(){
+    const from=fromDate.value;
+    const to=toDate.value;
 
     if(!from || !to){
         return;
     }
 
-    clearNameResults();
-
-    document.dispatchEvent(
-        new CustomEvent(
-            'closedInquiryDateSearch',
-            {
-                detail:{
-                    from,
-                    to
-                }
-            }
-        )
-    );
-}
-
-/* POPULATE NAME DROPDOWN */
-
-export function setClosedLookupResults(
-    records
-){
-    clearNameResults();
+    const dateFrom=dateInputToEpoch(from);
+    const dateTo=dateInputToEpoch(to);
 
     if(
-        !records ||
-        records.length === 0
+        Number.isNaN(dateFrom) ||
+        Number.isNaN(dateTo)
     ){
         return;
     }
 
-    const sortedRecords =
-        [...records].sort(
-            (a,b) =>
-                String(
-                    a.parent_name || ''
-                ).localeCompare(
-                    String(
-                        b.parent_name || ''
-                    )
-                )
+    if(dateFrom>dateTo){
+        alert('The From date cannot be after the To date.');
+        return;
+    }
+
+    clearNameResults();
+
+    dateSearchButton.disabled=true;
+    dateSearchButton.textContent='Searching...';
+
+    try{
+        const response=await fetch(
+            `${HISTORY_API}?date_from=${dateFrom}&date_to=${dateTo}`,
+            {
+                method:'GET',
+                credentials:'include'
+            }
         );
 
+        if(!response.ok){
+            throw new Error(
+                `History request failed: ${response.status}`
+            );
+        }
+
+        const data=await response.json();
+
+        setClosedLookupResults(
+            data.qna_inquiry_history || []
+        );
+    }
+    catch(error){
+        console.error(
+            'Closed inquiry lookup failed:',
+            error
+        );
+
+        alert(
+            'Unable to load closed inquiries. Please try again.'
+        );
+    }
+    finally{
+        dateSearchButton.disabled=false;
+        dateSearchButton.textContent='Search';
+    }
+}
+
+/* POPULATE NAME DROPDOWN */
+
+export function setClosedLookupResults(records){
+    clearNameResults();
+
+    if(
+        !records ||
+        records.length===0
+    ){
+        nameSelect.innerHTML=`
+            <option value="">
+                No closed conversations found
+            </option>
+        `;
+
+        nameSearchContainer.hidden=false;
+        return;
+    }
+
+    const sortedRecords=[...records].sort(
+        (a,b)=>
+            String(a.parent_name || '').localeCompare(
+                String(b.parent_name || '')
+            )
+    );
+
     sortedRecords.forEach(
-        record => {
-            const option =
-                document.createElement(
-                    'option'
-                );
+        record=>{
+            const option=document.createElement('option');
 
-            option.value =
-                record.id;
+            option.value=record.id;
 
-            option.textContent =
+            option.textContent=
                 record.parent_name ||
                 'Unnamed';
 
-            option.dataset.record =
-                JSON.stringify(
-                    record
-                );
+            option.dataset.record=
+                JSON.stringify(record);
 
-            nameSelect.appendChild(
-                option
-            );
+            nameSelect.appendChild(option);
         }
     );
 
-    nameSearchContainer.hidden =
-        false;
+    nameSearchContainer.hidden=false;
 }
 
 /* SELECTED RECORD */
 
 export function getSelectedClosedInquiry(){
-    const option =
-        nameSelect.selectedOptions[0];
+    const option=nameSelect.selectedOptions[0];
 
     if(
         !option ||
@@ -283,7 +258,7 @@ export function getSelectedClosedInquiry(){
 
 lookupButton.addEventListener(
     'click',
-    event => {
+    event=>{
         event.stopPropagation();
 
         if(
@@ -311,22 +286,20 @@ dateSearchButton.addEventListener(
 
 menuContainer.addEventListener(
     'click',
-    event => {
+    event=>{
         event.stopPropagation();
     }
 );
 
 document.addEventListener(
     'click',
-    event => {
+    event=>{
         if(
             menuContainer.classList.contains(
                 'is-open'
             ) &&
-            !menuContainer.contains(
-                event.target
-            ) &&
-            event.target !== lookupButton
+            !menuContainer.contains(event.target) &&
+            event.target!==lookupButton
         ){
             closeClosedLookup();
         }
@@ -337,11 +310,8 @@ document.addEventListener(
 
 export function getClosedDateRange(){
     return {
-        from:
-            fromDate.value,
-
-        to:
-            toDate.value
+        from:fromDate.value,
+        to:toDate.value
     };
 }
 
