@@ -1,7 +1,9 @@
 import {
     getFranchises,
     getActiveInquiries,
-    createInquiry
+    getClosedInquiries,
+    createInquiry,
+    reopenInquiry
 } from './inquiry_api.js';
 
 import {
@@ -27,77 +29,60 @@ import {
     updateCardTimer
 } from './inquiry_ui.js';
 
-import './inquiry_closed_menu.js';
+import {
+    setClosedLookupResults,
+    getClosedInquirySelect
+} from './inquiry_closed_menu.js';
 
 /* STATE */
 
-let franchises = [];
-let franchiseMap = {};
-let timerInterval = null;
+let franchises=[];
+let franchiseMap={};
+let timerInterval=null;
 
 /* INITIALIZE */
 
 async function initialize(){
-
     showLoadingState();
 
     try{
-
         const [
             franchiseData,
             inquiryData
-        ] = await Promise.all([
+        ]=await Promise.all([
             getFranchises(),
             getActiveInquiries()
         ]);
 
-        franchises =
-            franchiseData || [];
-
+        franchises=franchiseData || [];
         buildFranchiseMap();
-
-        populateFranchises(
-            franchises
-        );
-
-        renderActiveInquiries(
-            inquiryData
-        );
-
+        populateFranchises(franchises);
+        renderActiveInquiries(inquiryData);
         startTimer();
-
     }
     catch(error){
-
         console.error(
             'Inquiry initialization failed:',
             error
         );
 
         clearInquiryCards();
-
         showEmptyState();
-
     }
-
 }
 
 /* FRANCHISE MAP */
 
 function buildFranchiseMap(){
-
-    franchiseMap = {};
+    franchiseMap={};
 
     franchises.forEach(
-        franchise => {
-
+        franchise=>{
             franchiseMap[
                 String(franchise.id)
-            ] = franchise.name;
-
+            ]=franchise.name;
         }
     );
-
 }
 
 /* RENDER ACTIVE INQUIRIES */
@@ -105,30 +90,23 @@ function buildFranchiseMap(){
 function renderActiveInquiries(
     inquiries
 ){
-
     clearInquiryCards();
 
     if(
         !inquiries ||
-        inquiries.length === 0
+        inquiries.length===0
     ){
-
         showEmptyState();
-
         return;
-
     }
 
     hideEmptyState();
 
     inquiries.forEach(
-        inquiry => {
-
-            const franchiseName =
+        inquiry=>{
+            const franchiseName=
                 franchiseMap[
-                    String(
-                        inquiry.franchise_id
-                    )
+                    String(inquiry.franchise_id)
                 ] ||
                 'Unknown Branch';
 
@@ -136,25 +114,21 @@ function renderActiveInquiries(
                 inquiry,
                 franchiseName
             );
-
         }
     );
-
 }
 
 /* TIMER */
 
 function updateAllTimers(){
-
-    const cards =
+    const cards=
         inquiryPanel.querySelectorAll(
             '.inquiry-card'
         );
 
     cards.forEach(
-        card => {
-
-            const timestamp =
+        card=>{
+            const timestamp=
                 Number(
                     card.dataset.lastActivity
                 );
@@ -163,83 +137,151 @@ function updateAllTimers(){
                 card,
                 timestamp
             );
-
         }
     );
-
 }
 
 function startTimer(){
-
     if(timerInterval){
-
-        clearInterval(
-            timerInterval
-        );
-
+        clearInterval(timerInterval);
     }
 
     updateAllTimers();
 
-    timerInterval =
+    timerInterval=
         setInterval(
             updateAllTimers,
             30000
         );
+}
 
+/* CLOSED INQUIRY SEARCH */
+
+async function handleClosedInquirySearch(
+    event
+){
+    const {
+        from,
+        to
+    }=event.detail;
+
+    if(!from || !to){
+        return;
+    }
+
+    try{
+        const records=
+            await getClosedInquiries(
+                from,
+                to
+            );
+
+        setClosedLookupResults(
+            records
+        );
+    }
+    catch(error){
+        console.error(
+            'Closed inquiry search failed:',
+            error
+        );
+
+        alert(
+            'Unable to search closed inquiries. Please try again.'
+        );
+    }
+}
+
+/* REOPEN CLOSED INQUIRY */
+
+async function handleClosedInquirySelection(){
+    const select=
+        getClosedInquirySelect();
+
+    const selectedOption=
+        select.selectedOptions[0];
+
+    if(
+        !selectedOption ||
+        !selectedOption.value
+    ){
+        return;
+    }
+
+    const inquiryId=
+        Number(
+            selectedOption.value
+        );
+
+    try{
+        select.disabled=true;
+
+        await reopenInquiry(
+            inquiryId
+        );
+
+        const inquiryData=
+            await getActiveInquiries();
+
+        renderActiveInquiries(
+            inquiryData
+        );
+    }
+    catch(error){
+        console.error(
+            'Reopen inquiry failed:',
+            error
+        );
+
+        alert(
+            'Unable to reopen the inquiry. Please try again.'
+        );
+    }
+    finally{
+        select.disabled=false;
+    }
 }
 
 /* NEW INQUIRY */
 
 async function handleCreateInquiry(){
-
-    const parentName =
+    const parentName=
         parentNameInput.value.trim();
 
-    const franchiseId =
+    const franchiseId=
         Number(
             franchiseSelect.value
         );
 
     if(!parentName){
-
         alert(
             'Please enter the parent or client name.'
         );
 
         parentNameInput.focus();
-
         return;
-
     }
 
     if(!franchiseId){
-
         alert(
             'Please select a franchise.'
         );
 
         franchiseSelect.focus();
-
         return;
-
     }
 
-    createInquiryButton.disabled =
-        true;
-
-    createInquiryButton.textContent =
-        'Creating...';
+    createInquiryButton.disabled=true;
+    createInquiryButton.textContent='Creating...';
 
     try{
-
-        const inquiry =
+        const inquiry=
             await createInquiry(
                 parentName,
                 franchiseId
             );
 
-        const franchiseName =
+        const franchiseName=
             franchiseMap[
                 String(franchiseId)
             ] ||
@@ -251,10 +293,8 @@ async function handleCreateInquiry(){
         );
 
         closeInquiry();
-
     }
     catch(error){
-
         console.error(
             'Create inquiry failed:',
             error
@@ -263,43 +303,30 @@ async function handleCreateInquiry(){
         alert(
             'Unable to create the inquiry. Please try again.'
         );
-
     }
     finally{
-
-        createInquiryButton.disabled =
-            false;
-
-        createInquiryButton.textContent =
-            'Create Inquiry';
-
+        createInquiryButton.disabled=false;
+        createInquiryButton.textContent='Create Inquiry';
     }
-
 }
 
 /* MODAL FRANCHISE LOADING */
 
 async function prepareNewInquiry(){
-
     openInquiryModal();
 
-    if(
-        franchises.length > 0
-    ){
-
+    if(franchises.length>0){
         populateFranchises(
             franchises
         );
 
         return;
-
     }
 
     showFranchiseLoading();
 
     try{
-
-        franchises =
+        franchises=
             await getFranchises();
 
         buildFranchiseMap();
@@ -307,19 +334,15 @@ async function prepareNewInquiry(){
         populateFranchises(
             franchises
         );
-
     }
     catch(error){
-
         console.error(
             'Franchise load failed:',
             error
         );
 
         showFranchiseError();
-
     }
-
 }
 
 /* EVENTS */
@@ -341,29 +364,32 @@ cancelInquiryButton.addEventListener(
 
 inquiryForm.addEventListener(
     'submit',
-    event => {
-
+    event=>{
         event.preventDefault();
-
         handleCreateInquiry();
-
     }
 );
 
 inquiryModal.addEventListener(
     'click',
-    event => {
-
+    event=>{
         if(
-            event.target ===
+            event.target===
             inquiryModal
         ){
-
             closeInquiry();
-
         }
-
     }
+);
+
+document.addEventListener(
+    'closedInquiryDateSearch',
+    handleClosedInquirySearch
+);
+
+getClosedInquirySelect().addEventListener(
+    'change',
+    handleClosedInquirySelection
 );
 
 /* START */
