@@ -1,3 +1,7 @@
+import {
+    getClosedInquiries
+} from './inquiry_api.js';
+
 /* CLOSED INQUIRY LOOKUP MENU */
 
 const menuContainer=document.createElement('div');
@@ -119,7 +123,7 @@ function clearNameResults(){
 
 /* SEARCH CLOSED RECORDS */
 
-function requestClosedRecords(){
+async function requestClosedRecords(){
     const from=fromDate.value;
     const to=toDate.value;
 
@@ -149,18 +153,30 @@ function requestClosedRecords(){
     dateSearchButton.disabled=true;
     dateSearchButton.textContent='Searching...';
 
-    document.dispatchEvent(
-        new CustomEvent(
-            'closedInquiryDateSearch',
-            {
-                detail:{
-                    from:dateFrom,
-                    to:dateTo,
-                    button:dateSearchButton
-                }
-            }
-        )
-    );
+    try{
+        const records=await getClosedInquiries(
+            dateFrom,
+            dateTo
+        );
+
+        setClosedLookupResults(
+            records
+        );
+    }
+    catch(error){
+        console.error(
+            'Closed inquiry lookup failed:',
+            error
+        );
+
+        alert(
+            'Unable to load closed inquiries. Please try again.'
+        );
+    }
+    finally{
+        dateSearchButton.disabled=false;
+        dateSearchButton.textContent='Search';
+    }
 }
 
 /* POPULATE NAME DROPDOWN */
@@ -179,9 +195,6 @@ export function setClosedLookupResults(records){
         `;
 
         nameSearchContainer.hidden=false;
-        dateSearchButton.disabled=false;
-        dateSearchButton.textContent='Search';
-
         return;
     }
 
@@ -205,8 +218,6 @@ export function setClosedLookupResults(records){
     );
 
     nameSearchContainer.hidden=false;
-    dateSearchButton.disabled=false;
-    dateSearchButton.textContent='Search';
 }
 
 /* SELECTED RECORD */
@@ -229,13 +240,6 @@ export function getSelectedClosedInquiry(){
     catch(error){
         return null;
     }
-}
-
-/* CLOSE MENU AFTER REOPEN */
-
-export function closeClosedLookup(){
-    menuContainer.classList.remove('is-open');
-    menuContainer.setAttribute('aria-hidden','true');
 }
 
 /* EVENTS */
