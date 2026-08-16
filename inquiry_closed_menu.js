@@ -1,8 +1,8 @@
-/* Closed inquiry lookup menu*/
+/* CLOSED INQUIRY LOOKUP MENU */
 
 const menuContainer = document.createElement('div');
 menuContainer.className = 'closed-lookup-menu';
-menuContainer.setAttribute('aria-hidden', 'true');
+menuContainer.setAttribute('aria-hidden','true');
 
 menuContainer.innerHTML = `
     <div class="closed-lookup-header">
@@ -10,6 +10,7 @@ menuContainer.innerHTML = `
             <h3>Lookup Closed</h3>
             <p>Find a previous conversation.</p>
         </div>
+
         <button
             type="button"
             class="closed-lookup-close"
@@ -17,32 +18,15 @@ menuContainer.innerHTML = `
         >×</button>
     </div>
 
-    <div class="closed-lookup-options">
-        <button
-            type="button"
-            class="closed-lookup-mode is-active"
-            data-mode="date"
-        >
-            By Date
-        </button>
-
-        <button
-            type="button"
-            class="closed-lookup-mode"
-            data-mode="name"
-        >
-            By Name
-        </button>
-    </div>
-
     <div class="closed-lookup-date-search">
         <label for="closedFromDate">From</label>
+        <label for="closedToDate">To</label>
+
         <input
             type="date"
             id="closedFromDate"
         >
 
-        <label for="closedToDate">To</label>
         <input
             type="date"
             id="closedToDate"
@@ -59,61 +43,33 @@ menuContainer.innerHTML = `
 
     <div
         class="closed-lookup-name-search"
+        id="closedNameSearchContainer"
         hidden
     >
-        <label for="closedNameSearch">Parent / Client Name</label>
+        <label for="closedNameSelect">
+            Parent / Client Name
+        </label>
 
-        <div class="closed-lookup-name-row">
-            <input
-                type="text"
-                id="closedNameSearch"
-                placeholder="Enter a name"
-                autocomplete="off"
-            >
-
-            <button
-                type="button"
-                class="closed-lookup-search"
-                id="closedNameSearchButton"
-            >
-                Search
-            </button>
-        </div>
-    </div>
-
-    <div
-        class="closed-lookup-results"
-        id="closedLookupResults"
-    >
-        <div class="closed-lookup-empty">
-            Select a date or search for a name.
-        </div>
+        <select
+            id="closedNameSelect"
+        >
+            <option value="">
+                Select a conversation
+            </option>
+        </select>
     </div>
 `;
 
 document.body.appendChild(menuContainer);
 
 const lookupButton =
-    document.getElementById('lookupClosedButton');
+    document.getElementById(
+        'lookupClosedButton'
+    );
 
 const closeButton =
     menuContainer.querySelector(
         '.closed-lookup-close'
-    );
-
-const modeButtons =
-    menuContainer.querySelectorAll(
-        '.closed-lookup-mode'
-    );
-
-const dateSearch =
-    menuContainer.querySelector(
-        '.closed-lookup-date-search'
-    );
-
-const nameSearch =
-    menuContainer.querySelector(
-        '.closed-lookup-name-search'
     );
 
 const fromDate =
@@ -126,34 +82,36 @@ const toDate =
         '#closedToDate'
     );
 
-const nameInput =
+const dateSearchButton =
     menuContainer.querySelector(
-        '#closedNameSearch'
+        '#closedDateSearch'
     );
 
-/* Date helpers*/
+const nameSearchContainer =
+    menuContainer.querySelector(
+        '#closedNameSearchContainer'
+    );
 
-function formatDateInput(
-    date
-){
+const nameSelect =
+    menuContainer.querySelector(
+        '#closedNameSelect'
+    );
+
+/* DATE HELPERS */
+
+function formatDateInput(date){
     const year =
         date.getFullYear();
 
     const month =
         String(
             date.getMonth() + 1
-        ).padStart(
-            2,
-            '0'
-        );
+        ).padStart(2,'0');
 
     const day =
         String(
             date.getDate()
-        ).padStart(
-            2,
-            '0'
-        );
+        ).padStart(2,'0');
 
     return `${year}-${month}-${day}`;
 }
@@ -162,27 +120,25 @@ function setDefaultDates(){
     const today =
         new Date();
 
-    const yesterday =
-        new Date();
-
-    yesterday.setDate(
-        today.getDate() - 1
-    );
-
-    fromDate.value =
-        formatDateInput(
-            yesterday
-        );
-
-    toDate.value =
+    const todayValue =
         formatDateInput(
             today
         );
+
+    fromDate.value =
+        todayValue;
+
+    toDate.value =
+        todayValue;
 }
 
-/* Menu visibility*/
+/* MENU VISIBILITY */
 
 function openClosedLookup(){
+    setDefaultDates();
+
+    clearNameResults();
+
     menuContainer.classList.add(
         'is-open'
     );
@@ -191,8 +147,6 @@ function openClosedLookup(){
         'aria-hidden',
         'false'
     );
-
-    setDefaultDates();
 }
 
 function closeClosedLookup(){
@@ -206,48 +160,126 @@ function closeClosedLookup(){
     );
 }
 
-/* Search mode*/
+/* CLEAR NAME RESULTS */
 
-function setSearchMode(
-    mode
+function clearNameResults(){
+    nameSearchContainer.hidden =
+        true;
+
+    nameSelect.innerHTML = `
+        <option value="">
+            Select a conversation
+        </option>
+    `;
+}
+
+/* SEARCH CLOSED RECORDS */
+
+function requestClosedRecords(){
+    const from =
+        fromDate.value;
+
+    const to =
+        toDate.value;
+
+    if(!from || !to){
+        return;
+    }
+
+    clearNameResults();
+
+    document.dispatchEvent(
+        new CustomEvent(
+            'closedInquiryDateSearch',
+            {
+                detail:{
+                    from,
+                    to
+                }
+            }
+        )
+    );
+}
+
+/* POPULATE NAME DROPDOWN */
+
+export function setClosedLookupResults(
+    records
 ){
-    modeButtons.forEach(
-        button => {
-            button.classList.toggle(
-                'is-active',
-                button.dataset.mode === mode
+    clearNameResults();
+
+    if(
+        !records ||
+        records.length === 0
+    ){
+        return;
+    }
+
+    const sortedRecords =
+        [...records].sort(
+            (a,b) =>
+                String(
+                    a.parent_name || ''
+                ).localeCompare(
+                    String(
+                        b.parent_name || ''
+                    )
+                )
+        );
+
+    sortedRecords.forEach(
+        record => {
+            const option =
+                document.createElement(
+                    'option'
+                );
+
+            option.value =
+                record.id;
+
+            option.textContent =
+                record.parent_name ||
+                'Unnamed';
+
+            option.dataset.record =
+                JSON.stringify(
+                    record
+                );
+
+            nameSelect.appendChild(
+                option
             );
         }
     );
 
-    const isDate =
-        mode === 'date';
+    nameSearchContainer.hidden =
+        false;
+}
 
-    dateSearch.hidden =
-        !isDate;
+/* SELECTED RECORD */
 
-    nameSearch.hidden =
-        isDate;
+export function getSelectedClosedInquiry(){
+    const option =
+        nameSelect.selectedOptions[0];
 
-    if(!isDate){
-        nameInput.focus();
+    if(
+        !option ||
+        !option.value
+    ){
+        return null;
+    }
+
+    try{
+        return JSON.parse(
+            option.dataset.record
+        );
+    }
+    catch(error){
+        return null;
     }
 }
 
-modeButtons.forEach(
-    button => {
-        button.addEventListener(
-            'click',
-            () => {
-                setSearchMode(
-                    button.dataset.mode
-                );
-            }
-        );
-    }
-);
-
-/* Events*/
+/* EVENTS */
 
 lookupButton.addEventListener(
     'click',
@@ -270,6 +302,11 @@ lookupButton.addEventListener(
 closeButton.addEventListener(
     'click',
     closeClosedLookup
+);
+
+dateSearchButton.addEventListener(
+    'click',
+    requestClosedRecords
 );
 
 menuContainer.addEventListener(
@@ -296,7 +333,7 @@ document.addEventListener(
     }
 );
 
-/* Export search controls for API wiring*/
+/* EXPORT DATE RANGE */
 
 export function getClosedDateRange(){
     return {
@@ -308,22 +345,8 @@ export function getClosedDateRange(){
     };
 }
 
-export function getClosedName(){
-    return nameInput.value.trim();
-}
+/* EXPORT SELECTED RECORD */
 
-export function setClosedLookupResults(
-    results
-){
-    const container =
-        menuContainer.querySelector(
-            '#closedLookupResults'
-        );
-
-    container.innerHTML =
-        results || `
-            <div class="closed-lookup-empty">
-                No closed conversations found.
-            </div>
-        `;
+export function getClosedInquirySelect(){
+    return nameSelect;
 }
