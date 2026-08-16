@@ -2,6 +2,7 @@ const FRANCHISE_API='https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/get_franchis
 const INQUIRY_API='https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_inquiry_history';
 const ACTIVE_INQUIRY_API='https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_inquiry_history_active';
 const HISTORY_API='https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_get_history';
+const REOPEN_INQUIRY_API='https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_set_inquiry_history_to_null';
 
 function getAuthToken(){
     return localStorage.getItem('authToken');
@@ -102,6 +103,44 @@ export async function getClosedInquiries(
     const result=await response.json();
 
     return result.qna_inquiry_history || [];
+}
+
+/* REOPEN CLOSED INQUIRY */
+
+export async function reopenInquiry(
+    inquiryId
+){
+    const authToken=getAuthToken();
+
+    if(!authToken){
+        throw new Error('Authentication token not found.');
+    }
+
+    const response=await fetch(
+        REOPEN_INQUIRY_API,
+        {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Accept':'application/json',
+                'Authorization':`Bearer ${authToken}`
+            },
+            body:JSON.stringify({
+                id:inquiryId
+            })
+        }
+    );
+
+    if(!response.ok){
+        const errorText=await response.text();
+
+        throw new Error(
+            errorText ||
+            `Unable to reopen inquiry. HTTP ${response.status}`
+        );
+    }
+
+    return await response.json();
 }
 
 /* CREATE INQUIRY */
