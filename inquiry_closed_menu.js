@@ -1,3 +1,4 @@
+
 import {
     getClosedInquiries
 } from './inquiry_api.js';
