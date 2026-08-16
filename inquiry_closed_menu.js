@@ -1,3 +1,7 @@
+import {
+    getClosedInquiries
+} from './inquiry_api.js';
+
 /* CLOSED INQUIRY LOOKUP MENU */
 
 const menuContainer=document.createElement('div');
@@ -10,6 +14,7 @@ menuContainer.innerHTML=`
             <h3>Lookup Closed</h3>
             <p>Find a previous conversation.</p>
         </div>
+
         <button
             type="button"
             class="closed-lookup-close"
@@ -66,9 +71,6 @@ const toDate=menuContainer.querySelector('#closedToDate');
 const dateSearchButton=menuContainer.querySelector('#closedDateSearch');
 const nameSearchContainer=menuContainer.querySelector('#closedNameSearchContainer');
 const nameSelect=menuContainer.querySelector('#closedNameSelect');
-
-const HISTORY_API=
-    'https://x8ki-letl-twmt.n7.xano.io/api:U9BIDXtD/qna_get_history';
 
 /* DATE HELPERS */
 
@@ -140,7 +142,9 @@ async function requestClosedRecords(){
     }
 
     if(dateFrom>dateTo){
-        alert('The From date cannot be after the To date.');
+        alert(
+            'The From date cannot be after the To date.'
+        );
         return;
     }
 
@@ -150,24 +154,13 @@ async function requestClosedRecords(){
     dateSearchButton.textContent='Searching...';
 
     try{
-        const response=await fetch(
-            `${HISTORY_API}?date_from=${dateFrom}&date_to=${dateTo}`,
-            {
-                method:'GET',
-                credentials:'include'
-            }
+        const records=await getClosedInquiries(
+            dateFrom,
+            dateTo
         );
 
-        if(!response.ok){
-            throw new Error(
-                `History request failed: ${response.status}`
-            );
-        }
-
-        const data=await response.json();
-
         setClosedLookupResults(
-            data.qna_inquiry_history || []
+            records
         );
     }
     catch(error){
@@ -217,13 +210,8 @@ export function setClosedLookupResults(records){
             const option=document.createElement('option');
 
             option.value=record.id;
-
-            option.textContent=
-                record.parent_name ||
-                'Unnamed';
-
-            option.dataset.record=
-                JSON.stringify(record);
+            option.textContent=record.parent_name || 'Unnamed';
+            option.dataset.record=JSON.stringify(record);
 
             nameSelect.appendChild(option);
         }
@@ -262,9 +250,7 @@ lookupButton.addEventListener(
         event.stopPropagation();
 
         if(
-            menuContainer.classList.contains(
-                'is-open'
-            )
+            menuContainer.classList.contains('is-open')
         ){
             closeClosedLookup();
         }
@@ -295,9 +281,7 @@ document.addEventListener(
     'click',
     event=>{
         if(
-            menuContainer.classList.contains(
-                'is-open'
-            ) &&
+            menuContainer.classList.contains('is-open') &&
             !menuContainer.contains(event.target) &&
             event.target!==lookupButton
         ){
