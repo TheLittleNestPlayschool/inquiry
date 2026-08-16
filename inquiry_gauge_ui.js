@@ -5,7 +5,7 @@
 /*
     The gauge represents 3 hours.
 
-    3 = top
+    0 = top
     1 = 4 o'clock
     2 = 8 o'clock
 
@@ -93,21 +93,21 @@ export function createInquiryGauge(
 
 
     /* ======================================
-       3 — TOP
+       0 — TOP
     ====================================== */
 
-    const label3 =
+    const label0 =
         document.createElement(
             'span'
         );
 
 
-    label3.className =
+    label0.className =
         'gauge-label gauge-label-3';
 
 
-    label3.textContent =
-        '3';
+    label0.textContent =
+        '0';
 
 
     /* ======================================
@@ -183,7 +183,7 @@ export function createInquiryGauge(
     ====================================== */
 
     face.appendChild(
-        label3
+        label0
     );
 
     face.appendChild(
