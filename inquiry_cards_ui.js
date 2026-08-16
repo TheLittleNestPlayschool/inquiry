@@ -170,6 +170,42 @@ export function addInquiryCard(
 
 
     /* ======================================
+       CLOSE BUTTON
+    ====================================== */
+
+    const closeButton =
+        document.createElement(
+            'button'
+        );
+
+
+    closeButton.type =
+        'button';
+
+
+    closeButton.className =
+        'inquiry-card-close';
+
+
+    closeButton.textContent =
+        'Close';
+
+
+    closeButton.dataset.inquiryId =
+        inquiry.id;
+
+
+    /*
+     * The actual close action will be
+     * connected next.
+     */
+
+    content.appendChild(
+        closeButton
+    );
+
+
+    /* ======================================
        GAUGE
     ====================================== */
 
