@@ -4,76 +4,30 @@
 
 .modal{
     position:fixed;
-
     inset:0;
-
-    background:
-        rgba(
-            15,
-            23,
-            42,
-            .35
-        );
-
+    background:rgba(15,23,42,.35);
     display:none;
-
     align-items:center;
-
     justify-content:center;
-
     padding:24px;
-
     z-index:1000;
 }
-
 
 .modal.is-open{
     display:flex;
 }
 
-
 .modal-card{
     width:100%;
-
     max-width:620px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            .88
-        );
-
-    backdrop-filter:
-        blur(18px);
-
-    -webkit-backdrop-filter:
-        blur(18px);
-
-    border:
-        1px solid
-        rgba(
-            255,
-            255,
-            255,
-            .9
-        );
-
+    background:rgba(255,255,255,.88);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.9);
     border-radius:16px;
-
-    box-shadow:
-        0 20px 60px
-        rgba(
-            0,
-            0,
-            0,
-            .2
-        );
-
+    box-shadow:0 20px 60px rgba(0,0,0,.2);
     overflow:hidden;
 }
-
 
 /* ==========================================
    MODAL HEADER
@@ -81,61 +35,47 @@
 
 .modal-header{
     display:flex;
-
     align-items:flex-start;
-
     justify-content:space-between;
-
     padding:24px;
-
-    border-bottom:
-        1px solid
-        rgba(
-            0,
-            0,
-            0,
-            .08
-        );
+    border-bottom:1px solid rgba(0,0,0,.08);
 }
-
 
 .modal-header h2{
     margin:0;
-
     font-size:20px;
-
     font-weight:600;
 }
 
-
 .modal-header p{
-    margin:
-        6px
-        0
-        0;
-
+    margin:6px 0 0;
     color:#6b7280;
-
     font-size:14px;
 }
 
-
 .modal-close{
-    border:0;
-
-    background:transparent;
-
-    font-size:28px;
-
-    line-height:1;
-
-    color:#6b7280;
-
-    cursor:pointer;
-
+    width:28px;
+    height:28px;
     padding:0;
+    border:0;
+    border-radius:8px;
+    background:#9bc98a;
+    color:#000000;
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+    transition:
+        background .15s ease,
+        transform .15s ease;
 }
 
+.modal-close:hover{
+    background:#a8d398;
+}
+
+.modal-close:active{
+    transform:scale(.96);
+}
 
 /* ==========================================
    FORM
@@ -145,58 +85,33 @@
     padding:24px;
 }
 
-
 .form-group{
     margin-bottom:18px;
 }
 
-
 .form-group label{
     display:block;
-
     margin-bottom:7px;
-
     font-size:13px;
-
     font-weight:600;
 }
-
 
 .form-group input,
 .form-group select{
     width:100%;
-
     height:42px;
-
-    padding:
-        0
-        12px;
-
-    border:
-        1px solid
-        #d1d5db;
-
+    padding:0 12px;
+    border:1px solid #d1d5db;
     border-radius:8px;
-
-    background:
-        rgba(
-            255,
-            255,
-            255,
-            .75
-        );
-
+    background:rgba(255,255,255,.75);
     font-size:14px;
-
     outline:none;
 }
 
-
 .form-group input:focus,
 .form-group select:focus{
-    border-color:#3b82f6;
+    border-color:#7fb66e;
 }
-
 
 /* ==========================================
    MODAL FOOTER
@@ -204,60 +119,40 @@
 
 .modal-footer{
     display:flex;
-
     justify-content:flex-end;
-
     gap:10px;
-
-    padding:
-        18px
-        24px;
-
-    border-top:
-        1px solid
-        rgba(
-            0,
-            0,
-            0,
-            .08
-        );
+    padding:18px 24px;
+    border-top:1px solid rgba(0,0,0,.08);
 }
-
 
 .button-secondary,
 .button-primary{
     border:0;
-
     border-radius:8px;
-
-    padding:
-        10px
-        16px;
-
+    padding:10px 16px;
+    background:#9bc98a;
+    color:#000000;
     font-size:14px;
-
     font-weight:600;
-
     cursor:pointer;
+    transition:
+        background .15s ease,
+        transform .15s ease,
+        box-shadow .15s ease;
 }
 
-
-.button-secondary{
-    background:#f3f4f6;
-
-    color:#374151;
+.button-secondary:hover,
+.button-primary:hover{
+    background:#a8d398;
+    box-shadow:0 4px 12px rgba(31,41,55,.1);
 }
 
-
-.button-primary{
-    background:#1f2937;
-
-    color:#ffffff;
+.button-secondary:active,
+.button-primary:active{
+    transform:scale(.97);
 }
-
 
 .button-primary:disabled{
     opacity:.6;
-
     cursor:not-allowed;
 }
