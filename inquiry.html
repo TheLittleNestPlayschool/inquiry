@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -12,21 +10,13 @@
 
     <title>Inquiries</title>
 
-
-    <!-- ==========================================
-         SHARED APPLICATION BACKGROUND
-    =========================================== -->
-
+    <!-- Shared Application Background -->
     <link
         rel="stylesheet"
         href="background.css"
     >
 
-
-    <!-- ==========================================
-         INQUIRY PAGE STYLES
-    =========================================== -->
-
+    <!-- Inquiry Page Styles -->
     <link
         rel="stylesheet"
         href="inquiry.css"
@@ -49,37 +39,23 @@
 
 </head>
 
-
 <body>
 
-
-    <!-- ==========================================
-         SHARED APPLICATION BACKGROUND
-    =========================================== -->
-
+    <!-- Shared Application Background -->
     <div
         class="app-background"
         aria-hidden="true"
     >
-
         <div class="gradient-overlay"></div>
-
     </div>
 
-
-    <!-- ==========================================
-         INQUIRY APPLICATION
-    =========================================== -->
-
+    <!-- Inquiry Application -->
     <main class="page">
 
-
-        <!-- PAGE HEADER -->
-
+        <!-- Page Header -->
         <header class="page-header">
 
             <div>
-
                 <h1 class="page-title">
                     Inquiries
                 </h1>
@@ -87,23 +63,31 @@
                 <p class="page-subtitle">
                     Manage parent inquiries and conversations.
                 </p>
+            </div>
+
+            <div class="page-header-actions">
+
+                <button
+                    id="lookupClosedButton"
+                    class="lookup-closed-button"
+                    type="button"
+                >
+                    Lookup Closed
+                </button>
+
+                <button
+                    id="newInquiryButton"
+                    class="new-inquiry-button"
+                    type="button"
+                >
+                    + New Inquiry
+                </button>
 
             </div>
 
-
-            <button
-                id="newInquiryButton"
-                class="new-inquiry-button"
-                type="button"
-            >
-                + New Inquiry
-            </button>
-
         </header>
 
-
-        <!-- INQUIRY LIST -->
-
+        <!-- Inquiry List -->
         <section
             id="inquiryPanel"
             class="inquiry-panel"
@@ -132,11 +116,7 @@
 
     </main>
 
-
-    <!-- ==========================================
-         NEW INQUIRY MODAL
-    =========================================== -->
-
+    <!-- New Inquiry Modal -->
     <div
         id="inquiryModal"
         class="modal"
@@ -150,13 +130,10 @@
             aria-labelledby="newInquiryTitle"
         >
 
-
-            <!-- MODAL HEADER -->
-
+            <!-- Modal Header -->
             <div class="modal-header">
 
                 <div>
-
                     <h2 id="newInquiryTitle">
                         New Inquiry
                     </h2>
@@ -164,9 +141,7 @@
                     <p>
                         Enter the basic information for this inquiry.
                     </p>
-
                 </div>
-
 
                 <button
                     id="closeInquiryModal"
@@ -179,9 +154,7 @@
 
             </div>
 
-
-            <!-- FORM -->
-
+            <!-- Form -->
             <form
                 id="inquiryForm"
                 class="form"
@@ -189,9 +162,7 @@
 
                 <div class="form-group">
 
-                    <label
-                        for="parentName"
-                    >
+                    <label for="parentName">
                         Parent / Client Name
                     </label>
 
@@ -206,12 +177,9 @@
 
                 </div>
 
-
                 <div class="form-group">
 
-                    <label
-                        for="franchiseSelect"
-                    >
+                    <label for="franchiseSelect">
                         Franchise / Branch
                     </label>
 
@@ -229,12 +197,9 @@
 
                 </div>
 
-
                 <div class="form-group">
 
-                    <label
-                        for="source"
-                    >
+                    <label for="source">
                         Source
                     </label>
 
@@ -250,9 +215,7 @@
 
             </form>
 
-
-            <!-- MODAL FOOTER -->
-
+            <!-- Modal Footer -->
             <div class="modal-footer">
 
                 <button
@@ -262,7 +225,6 @@
                 >
                     Cancel
                 </button>
-
 
                 <button
                     id="createInquiryButton"
@@ -279,11 +241,7 @@
 
     </div>
 
-
-    <!-- ==========================================
-         INQUIRY APPLICATION
-    =========================================== -->
-
+    <!-- Inquiry Application -->
     <script
         type="module"
         src="inquiry.js"
