@@ -4,7 +4,6 @@ import {
     createInquiry
 } from './inquiry_api.js';
 
-
 import {
     newInquiryButton,
     inquiryModal,
@@ -28,59 +27,42 @@ import {
     updateCardTimer
 } from './inquiry_ui.js';
 
+import './inquiry_closed_menu.js';
 
-/* ==========================================
-   STATE
-========================================== */
+/* STATE */
 
 let franchises = [];
-
 let franchiseMap = {};
-
 let timerInterval = null;
 
-
-/* ==========================================
-   INITIALIZE
-========================================== */
+/* INITIALIZE */
 
 async function initialize(){
 
     showLoadingState();
 
-
     try{
-
-        /*
-         * Load both datasets once.
-         */
 
         const [
             franchiseData,
             inquiryData
-        ] =
-            await Promise.all([
-                getFranchises(),
-                getActiveInquiries()
-            ]);
-
+        ] = await Promise.all([
+            getFranchises(),
+            getActiveInquiries()
+        ]);
 
         franchises =
             franchiseData || [];
 
-
         buildFranchiseMap();
-
 
         populateFranchises(
             franchises
         );
 
-
         renderActiveInquiries(
             inquiryData
         );
-
 
         startTimer();
 
@@ -92,9 +74,7 @@ async function initialize(){
             error
         );
 
-
         clearInquiryCards();
-
 
         showEmptyState();
 
@@ -102,42 +82,31 @@ async function initialize(){
 
 }
 
-
-/* ==========================================
-   FRANCHISE MAP
-========================================== */
+/* FRANCHISE MAP */
 
 function buildFranchiseMap(){
 
     franchiseMap = {};
 
-
     franchises.forEach(
         franchise => {
 
             franchiseMap[
-                String(
-                    franchise.id
-                )
-            ] =
-                franchise.name;
+                String(franchise.id)
+            ] = franchise.name;
 
         }
     );
 
 }
 
-
-/* ==========================================
-   RENDER ACTIVE INQUIRIES
-========================================== */
+/* RENDER ACTIVE INQUIRIES */
 
 function renderActiveInquiries(
     inquiries
 ){
 
     clearInquiryCards();
-
 
     if(
         !inquiries ||
@@ -150,9 +119,7 @@ function renderActiveInquiries(
 
     }
 
-
     hideEmptyState();
-
 
     inquiries.forEach(
         inquiry => {
@@ -165,7 +132,6 @@ function renderActiveInquiries(
                 ] ||
                 'Unknown Branch';
 
-
             addInquiryCard(
                 inquiry,
                 franchiseName
@@ -176,10 +142,7 @@ function renderActiveInquiries(
 
 }
 
-
-/* ==========================================
-   TIMER
-========================================== */
+/* TIMER */
 
 function updateAllTimers(){
 
@@ -188,7 +151,6 @@ function updateAllTimers(){
             '.inquiry-card'
         );
 
-
     cards.forEach(
         card => {
 
@@ -196,7 +158,6 @@ function updateAllTimers(){
                 Number(
                     card.dataset.lastActivity
                 );
-
 
             updateCardTimer(
                 card,
@@ -208,7 +169,6 @@ function updateAllTimers(){
 
 }
 
-
 function startTimer(){
 
     if(timerInterval){
@@ -219,9 +179,7 @@ function startTimer(){
 
     }
 
-
     updateAllTimers();
-
 
     timerInterval =
         setInterval(
@@ -231,22 +189,17 @@ function startTimer(){
 
 }
 
-
-/* ==========================================
-   NEW INQUIRY
-========================================== */
+/* NEW INQUIRY */
 
 async function handleCreateInquiry(){
 
     const parentName =
         parentNameInput.value.trim();
 
-
     const franchiseId =
         Number(
             franchiseSelect.value
         );
-
 
     if(!parentName){
 
@@ -260,7 +213,6 @@ async function handleCreateInquiry(){
 
     }
 
-
     if(!franchiseId){
 
         alert(
@@ -273,14 +225,11 @@ async function handleCreateInquiry(){
 
     }
 
-
     createInquiryButton.disabled =
         true;
 
-
     createInquiryButton.textContent =
         'Creating...';
-
 
     try{
 
@@ -290,21 +239,16 @@ async function handleCreateInquiry(){
                 franchiseId
             );
 
-
         const franchiseName =
             franchiseMap[
-                String(
-                    franchiseId
-                )
+                String(franchiseId)
             ] ||
             'Unknown Branch';
-
 
         addInquiryCard(
             inquiry,
             franchiseName
         );
-
 
         closeInquiry();
 
@@ -316,7 +260,6 @@ async function handleCreateInquiry(){
             error
         );
 
-
         alert(
             'Unable to create the inquiry. Please try again.'
         );
@@ -327,7 +270,6 @@ async function handleCreateInquiry(){
         createInquiryButton.disabled =
             false;
 
-
         createInquiryButton.textContent =
             'Create Inquiry';
 
@@ -335,15 +277,11 @@ async function handleCreateInquiry(){
 
 }
 
-
-/* ==========================================
-   MODAL FRANCHISE LOADING
-========================================== */
+/* MODAL FRANCHISE LOADING */
 
 async function prepareNewInquiry(){
 
     openInquiryModal();
-
 
     if(
         franchises.length > 0
@@ -357,18 +295,14 @@ async function prepareNewInquiry(){
 
     }
 
-
     showFranchiseLoading();
-
 
     try{
 
         franchises =
             await getFranchises();
 
-
         buildFranchiseMap();
-
 
         populateFranchises(
             franchises
@@ -382,35 +316,28 @@ async function prepareNewInquiry(){
             error
         );
 
-
         showFranchiseError();
 
     }
 
 }
 
-
-/* ==========================================
-   EVENTS
-========================================== */
+/* EVENTS */
 
 newInquiryButton.addEventListener(
     'click',
     prepareNewInquiry
 );
 
-
 closeInquiryModal.addEventListener(
     'click',
     closeInquiry
 );
 
-
 cancelInquiryButton.addEventListener(
     'click',
     closeInquiry
 );
-
 
 inquiryForm.addEventListener(
     'submit',
@@ -422,7 +349,6 @@ inquiryForm.addEventListener(
 
     }
 );
-
 
 inquiryModal.addEventListener(
     'click',
@@ -440,9 +366,6 @@ inquiryModal.addEventListener(
     }
 );
 
-
-/* ==========================================
-   START
-========================================== */
+/* START */
 
 initialize();
