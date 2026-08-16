@@ -19,24 +19,43 @@ const indicators=[
 let workspace=null;
 let selectedInquiry=null;
 
-/* CREATE WORKSPACE */
+
+/* ==========================================
+   CREATE WORKSPACE
+========================================== */
 
 function createWorkspace(){
+
     if(workspace){
         return;
     }
 
-    workspace=document.createElement('div');
-    workspace.className='inquiry-workspace';
-    workspace.setAttribute('aria-hidden','true');
+    workspace=
+        document.createElement(
+            'div'
+        );
+
+    workspace.className=
+        'inquiry-workspace';
+
+    workspace.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
 
     workspace.innerHTML=`
+
         <div
             class="inquiry-workspace-container"
             role="dialog"
             aria-modal="true"
             aria-labelledby="inquiryWorkspaceName"
         >
+
+
+            <!-- HEADER -->
+
             <header class="inquiry-workspace-header">
 
                 <div class="inquiry-workspace-header-info">
@@ -48,9 +67,12 @@ function createWorkspace(){
                         Inquiry
                     </h2>
 
-                    <p class="inquiry-workspace-branch"></p>
+                    <p class="inquiry-workspace-branch">
+                        Branch
+                    </p>
 
                 </div>
+
 
                 <button
                     type="button"
@@ -62,17 +84,46 @@ function createWorkspace(){
 
             </header>
 
-            <div class="inquiry-workspace-indicators"></div>
 
-            <div class="inquiry-workspace-history">
+            <!-- QUESTION INDICATORS -->
 
-                <div class="inquiry-workspace-history-empty">
-                    No conversation history yet.
+            <section
+                class="inquiry-workspace-indicators-section"
+            >
+
+                <div
+                    class="inquiry-workspace-indicators"
+                ></div>
+
+            </section>
+
+
+            <!-- CONVERSATION HISTORY -->
+
+            <section
+                class="inquiry-workspace-history-section"
+            >
+
+                <div
+                    class="inquiry-workspace-history"
+                >
+
+                    <div
+                        class="inquiry-workspace-history-empty"
+                    >
+                        No conversation history yet.
+                    </div>
+
                 </div>
 
-            </div>
+            </section>
 
-            <div class="inquiry-workspace-builder">
+
+            <!-- MESSAGE BUILDER -->
+
+            <section
+                class="inquiry-workspace-builder"
+            >
 
                 <label
                     class="inquiry-workspace-builder-label"
@@ -81,31 +132,64 @@ function createWorkspace(){
                     Paste Parent Message
                 </label>
 
-                <textarea
-                    id="inquiryWorkspaceMessageInput"
-                    class="inquiry-workspace-message-input"
-                    placeholder="Paste the parent's message here..."
-                ></textarea>
 
-                <div class="inquiry-workspace-builder-actions">
+                <div
+                    class="inquiry-workspace-message-row"
+                >
+
+                    <textarea
+                        id="inquiryWorkspaceMessageInput"
+                        class="inquiry-workspace-message-input"
+                        rows="2"
+                        maxlength="500"
+                        placeholder="Paste the parent's message here..."
+                    ></textarea>
+
 
                     <button
                         type="button"
                         class="inquiry-workspace-classify"
                     >
-                        Classify Message
+                        Find Response
                     </button>
 
                 </div>
 
-            </div>
+
+                <!-- SUGGESTIONS -->
+
+                <div
+                    class="inquiry-workspace-suggestions"
+                >
+
+                    <div
+                        class="inquiry-workspace-suggestions-title"
+                    >
+                        Suggestions
+                    </div>
+
+                    <div
+                        class="inquiry-workspace-suggestions-content"
+                    ></div>
+
+                </div>
+
+            </section>
+
 
         </div>
+
     `;
+
 
     document.body.appendChild(
         workspace
     );
+
+
+    /* ======================================
+       CLOSE
+    ====================================== */
 
     workspace
         .querySelector(
@@ -116,16 +200,27 @@ function createWorkspace(){
             closeInquiryWorkspace
         );
 
+
     workspace.addEventListener(
         'click',
         event=>{
+
             if(
-                event.target===workspace
+                event.target===
+                workspace
             ){
+
                 closeInquiryWorkspace();
+
             }
+
         }
     );
+
+
+    /* ======================================
+       FIND RESPONSE
+    ====================================== */
 
     workspace
         .querySelector(
@@ -133,13 +228,18 @@ function createWorkspace(){
         )
         .addEventListener(
             'click',
-            handleClassify
+            handleFindResponse
         );
 
+
     renderIndicators();
+
 }
 
-/* RENDER INDICATORS */
+
+/* ==========================================
+   RENDER INDICATORS
+========================================== */
 
 function renderIndicators(){
 
@@ -149,6 +249,7 @@ function renderIndicators(){
         );
 
     container.innerHTML='';
+
 
     indicators.forEach(
         indicator=>{
@@ -161,11 +262,40 @@ function renderIndicators(){
             element.className=
                 'inquiry-workspace-indicator';
 
+
+            const status=
+                document.createElement(
+                    'span'
+                );
+
+            status.className=
+                'inquiry-workspace-indicator-status';
+
+
+            const label=
+                document.createElement(
+                    'span'
+                );
+
+            label.className=
+                'inquiry-workspace-indicator-label';
+
+            label.textContent=
+                indicator;
+
+
             element.dataset.indicator=
                 indicator;
 
-            element.textContent=
-                indicator;
+
+            element.appendChild(
+                status
+            );
+
+            element.appendChild(
+                label
+            );
+
 
             container.appendChild(
                 element
@@ -176,7 +306,10 @@ function renderIndicators(){
 
 }
 
-/* OPEN */
+
+/* ==========================================
+   OPEN WORKSPACE
+========================================== */
 
 export function openInquiryWorkspace(
     inquiry
@@ -184,47 +317,60 @@ export function openInquiryWorkspace(
 
     createWorkspace();
 
+
     selectedInquiry=
         inquiry || null;
+
 
     const name=
         workspace.querySelector(
             '.inquiry-workspace-name'
         );
 
+
     const branch=
         workspace.querySelector(
             '.inquiry-workspace-branch'
         );
 
+
     name.textContent=
         inquiry?.parent_name ||
         'Inquiry';
+
 
     branch.textContent=
         inquiry?.franchise_name ||
         'Branch';
 
+
     workspace.classList.add(
         'is-open'
     );
+
 
     workspace.setAttribute(
         'aria-hidden',
         'false'
     );
 
+
     const input=
         workspace.querySelector(
             '.inquiry-workspace-message-input'
         );
 
+
     input.value='';
+
     input.focus();
 
 }
 
-/* CLOSE */
+
+/* ==========================================
+   CLOSE WORKSPACE
+========================================== */
 
 export function closeInquiryWorkspace(){
 
@@ -232,45 +378,60 @@ export function closeInquiryWorkspace(){
         return;
     }
 
+
     workspace.classList.remove(
         'is-open'
     );
+
 
     workspace.setAttribute(
         'aria-hidden',
         'true'
     );
 
+
     selectedInquiry=null;
 
 }
 
-/* CLASSIFY PLACEHOLDER */
 
-function handleClassify(){
+/* ==========================================
+   FIND RESPONSE
+========================================== */
+
+function handleFindResponse(){
 
     const input=
         workspace.querySelector(
             '.inquiry-workspace-message-input'
         );
 
+
     const message=
         input.value.trim();
 
+
     if(!message){
+
         input.focus();
+
         return;
+
     }
 
+
     console.log(
-        'Message ready for classification:',
+        'Find response:',
         message,
         selectedInquiry
     );
 
 }
 
-/* ESCAPE */
+
+/* ==========================================
+   ESCAPE
+========================================== */
 
 document.addEventListener(
     'keydown',
