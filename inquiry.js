@@ -2,7 +2,7 @@ import {
     getFranchises,
     getActiveInquiries,
     getClosedInquiries,
-    reopenInquiry
+    reopenInquiry,
     createInquiry
 } from './inquiry_api.js';
 
